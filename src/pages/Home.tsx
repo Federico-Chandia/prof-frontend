@@ -71,19 +71,21 @@ const Home: React.FC = () => {
                 <p className="text-sm text-gray-600">Servicios comunes: {c.subcategorias.slice(0,3).map(s => s.label).join(', ')}</p>
               </button>
             ))}
-          </div>*/ }
+          </div>
+        </div>
+      </div> */}
 
-          {/* CTA para profesionales */}
+      {/* CTA para profesionales */}
+      <div className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="mt-12 bg-blue-50 p-8 rounded-lg text-center">
             <h3 className="text-xl font-semibold mb-3">¿Sos profesional? Conseguí más clientes hoy</h3>
             <br />
             <Link to="/register" className="inline-block bg-blue-600 text-white px-9 py-2 rounded-md hover:bg-blue-700">Registrarme como profesional</Link>
           </div>
-        
 
-
-            
-         { /*Token Plans */  }
+          {/* Token Plans */}
+          <div className="mt-12">
             <h3 className="text-xl font-semibold mb-2 text-center">Elegi el plan que mas se adapte a vos</h3>
             <div className="mt-6 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-white p-4 rounded-lg text-center shadow-xl">
@@ -102,7 +104,11 @@ const Home: React.FC = () => {
                 <div className="text-sm text-gray-600 mt-2">Máxima visibilidad</div>
               </div>
             </div>
-            </div>
-  ) };
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Home;
