@@ -129,6 +129,24 @@ const Login: React.FC = () => {
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </div>
+          <div className="text-center">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-50 text-gray-500">Ó</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <Link 
+              to={`/register${window.location.search}`} 
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              Regístrate
+            </Link>
+          </div>
         </form>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LegalDocumentModal from '../components/LegalDocumentModal';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,16 @@ const Register: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Estados para aceptación de términos legales
+  const [legalAcceptance, setLegalAcceptance] = useState({
+    terminos: false,
+    privacidad: false,
+    cookies: false,
+  });
+  
+  // Estados para modales de documentos
+  const [activeModal, setActiveModal] = useState<'terminos' | 'privacidad' | 'cookies' | null>(null);
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -56,6 +67,19 @@ const Register: React.FC = () => {
     return null;
   };
 
+  const validateLegalAcceptance = () => {
+    if (!legalAcceptance.terminos) {
+      return 'Debes aceptar los Términos y Condiciones';
+    }
+    if (!legalAcceptance.privacidad) {
+      return 'Debes aceptar la Política de Privacidad';
+    }
+    if (!legalAcceptance.cookies) {
+      return 'Debes aceptar la Política de Cookies';
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -65,11 +89,38 @@ const Register: React.FC = () => {
       setError(addressError);
       return;
     }
+
+    const legalError = validateLegalAcceptance();
+    if (legalError) {
+      setError(legalError);
+      return;
+    }
     
     setLoading(true);
 
     try {
-      await register(formData);
+      const registerData = {
+        ...formData,
+        aceptacionLegal: {
+          terminosCondiciones: {
+            aceptado: legalAcceptance.terminos,
+            fechaAceptacion: new Date().toISOString(),
+            version: '1.0'
+          },
+          politicaPrivacidad: {
+            aceptado: legalAcceptance.privacidad,
+            fechaAceptacion: new Date().toISOString(),
+            version: '1.0'
+          },
+          politicaCookies: {
+            aceptado: legalAcceptance.cookies,
+            fechaAceptacion: new Date().toISOString(),
+            version: '1.0'
+          }
+        }
+      };
+
+      await register(registerData);
       
       // Verificar si hay un redirect en la URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -292,6 +343,115 @@ const Register: React.FC = () => {
             </div>
           </div>
 
+          {/* Sección de Aceptación de Términos Legales */}
+          <div className="space-y-4 border-t pt-6">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Documentos Legales Obligatorios
+            </h3>
+            <p className="text-xs text-gray-600">
+              Conforme a la Ley 25.326 de Protección de Datos Personales y legislación vigente de Buenos Aires, Argentina
+            </p>
+            
+            <div className="space-y-3">
+              {/* Términos y Condiciones */}
+              <div className="flex items-start">
+                <input
+                  id="terminos"
+                  type="checkbox"
+                  checked={legalAcceptance.terminos}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActiveModal('terminos');
+                    } else {
+                      setLegalAcceptance({ ...legalAcceptance, terminos: false });
+                    }
+                  }}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                />
+                <label htmlFor="terminos" className="ml-3 text-sm text-gray-700">
+                  Acepto los{' '}
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal('terminos')}
+                    className="font-medium text-blue-600 hover:text-blue-500 underline"
+                  >
+                    Términos y Condiciones
+                  </button>
+                  {legalAcceptance.terminos && (
+                    <span className="text-green-600 font-medium"> ✓ Aceptado</span>
+                  )}
+                </label>
+              </div>
+
+              {/* Política de Privacidad */}
+              <div className="flex items-start">
+                <input
+                  id="privacidad"
+                  type="checkbox"
+                  checked={legalAcceptance.privacidad}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActiveModal('privacidad');
+                    } else {
+                      setLegalAcceptance({ ...legalAcceptance, privacidad: false });
+                    }
+                  }}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                />
+                <label htmlFor="privacidad" className="ml-3 text-sm text-gray-700">
+                  Acepto la{' '}
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal('privacidad')}
+                    className="font-medium text-blue-600 hover:text-blue-500 underline"
+                  >
+                    Política de Privacidad
+                  </button>
+                  {legalAcceptance.privacidad && (
+                    <span className="text-green-600 font-medium"> ✓ Aceptado</span>
+                  )}
+                </label>
+              </div>
+
+              {/* Política de Cookies */}
+              <div className="flex items-start">
+                <input
+                  id="cookies"
+                  type="checkbox"
+                  checked={legalAcceptance.cookies}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActiveModal('cookies');
+                    } else {
+                      setLegalAcceptance({ ...legalAcceptance, cookies: false });
+                    }
+                  }}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                />
+                <label htmlFor="cookies" className="ml-3 text-sm text-gray-700">
+                  Acepto la{' '}
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal('cookies')}
+                    className="font-medium text-blue-600 hover:text-blue-500 underline"
+                  >
+                    Política de Cookies
+                  </button>
+                  {legalAcceptance.cookies && (
+                    <span className="text-green-600 font-medium"> ✓ Aceptado</span>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* Indicador de estado */}
+            {(legalAcceptance.terminos && legalAcceptance.privacidad && legalAcceptance.cookies) && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-md text-sm">
+                ✓ Todos los documentos han sido aceptados correctamente
+              </div>
+            )}
+          </div>
+
           <div>
             <button
               type="submit"
@@ -302,6 +462,40 @@ const Register: React.FC = () => {
             </button>
           </div>
         </form>
+
+        {/* Modales de Documentos Legales */}
+        <LegalDocumentModal
+          isOpen={activeModal === 'terminos'}
+          onClose={() => setActiveModal(null)}
+          documentType="terminos"
+          onAccept={(accepted) => {
+            if (accepted) {
+              setLegalAcceptance({ ...legalAcceptance, terminos: true });
+            }
+          }}
+        />
+
+        <LegalDocumentModal
+          isOpen={activeModal === 'privacidad'}
+          onClose={() => setActiveModal(null)}
+          documentType="privacidad"
+          onAccept={(accepted) => {
+            if (accepted) {
+              setLegalAcceptance({ ...legalAcceptance, privacidad: true });
+            }
+          }}
+        />
+
+        <LegalDocumentModal
+          isOpen={activeModal === 'cookies'}
+          onClose={() => setActiveModal(null)}
+          documentType="cookies"
+          onAccept={(accepted) => {
+            if (accepted) {
+              setLegalAcceptance({ ...legalAcceptance, cookies: true });
+            }
+          }}
+        />
       </div>
     </div>
   );

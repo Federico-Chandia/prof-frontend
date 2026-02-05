@@ -83,28 +83,26 @@ const Home: React.FC = () => {
 
 
             
-         {/* Token Plans 
+         { /*Token Plans */  }
             <h3 className="text-xl font-semibold mb-2 text-center">Elegi el plan que mas se adapte a vos</h3>
             <div className="mt-6 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-white p-4 rounded-lg text-center shadow-sm">
+              <div className="bg-white p-4 rounded-lg text-center shadow-xl">
                 <div className="text-lg font-semibold">Gratis</div>
-                <div className="text-2xl font-bold mt-2">3 tokens</div>
+                <div className="text-2xl font-bold mt-2">2 tokens</div>
                 <div className="text-sm text-gray-600 mt-2">Gratis al crear cuenta</div>
               </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-sm">
+              <div className="bg-white p-4 rounded-lg text-center shadow-xl">
                 <div className="text-lg font-semibold">Básico</div>
                 <div className="text-2xl font-bold mt-2">20 tokens</div>
                 <div className="text-sm text-gray-600 mt-2">Perfecto para empezar</div>
               </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-sm">
+              <div className="bg-white p-4 rounded-lg text-center shadow-xl">
                 <div className="text-lg font-semibold">Pro</div>
                 <div className="text-2xl font-bold mt-2">50 tokens</div>
                 <div className="text-sm text-gray-600 mt-2">Máxima visibilidad</div>
               </div>
             </div>
             </div>
-            */}
-        </div>
   ) };
 
 export default Home;
