@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -383,7 +384,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/view/terminos-condiciones', '_blank');
+                      const base = (api.defaults.baseURL as string) || '/api';
+                      window.open(base.replace(/\/$/, '') + '/legal/view/terminos-condiciones', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -412,7 +414,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/view/privacidad', '_blank');
+                      const base = (api.defaults.baseURL as string) || '/api';
+                      window.open(base.replace(/\/$/, '') + '/legal/view/privacidad', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -441,7 +444,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/view/cookies', '_blank');
+                      const base = (api.defaults.baseURL as string) || '/api';
+                      window.open(base.replace(/\/$/, '') + '/legal/view/cookies', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
