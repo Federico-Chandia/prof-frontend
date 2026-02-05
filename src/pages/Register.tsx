@@ -46,6 +46,22 @@ const Register: React.FC = () => {
         console.error('Error parsing legal acceptance from localStorage:', error);
       }
     }
+
+    // Escuchar mensajes desde pestaña abierta
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'LEGAL_DOCUMENT_ACCEPTED') {
+        const docType = event.data.docType;
+        setLegalAcceptance(prev => {
+          const updated = { ...prev, [docType]: true };
+          // Guardar en localStorage
+          localStorage.setItem('legalAcceptance', JSON.stringify(updated));
+          return updated;
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
