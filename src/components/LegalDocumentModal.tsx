@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 interface LegalDocumentModalProps {
   isOpen: boolean;
@@ -24,10 +25,10 @@ const LegalDocumentModal: React.FC<LegalDocumentModalProps> = ({
     cookies: 'Política de Cookies'
   };
 
-  const docUrls = {
-    terminos: '/api/legal/terminos-condiciones',
-    privacidad: '/api/legal/privacidad',
-    cookies: '/api/legal/cookies'
+  const docEndpoints = {
+    terminos: '/legal/terminos-condiciones',
+    privacidad: '/legal/privacidad',
+    cookies: '/legal/cookies'
   };
 
   useEffect(() => {
@@ -41,30 +42,17 @@ const LegalDocumentModal: React.FC<LegalDocumentModalProps> = ({
     setAccepted(false);
     setHasScrolledToBottom(false);
     try {
-      console.log(`Fetching document from: ${docUrls[documentType]}`);
-      const response = await fetch(docUrls[documentType]);
+      console.log(`Fetching document from: ${docEndpoints[documentType]}`);
+      const response = await api.get(docEndpoints[documentType]);
       
-      console.log(`Response status: ${response.status}`);
+      console.log('Response status:', response.status);
+      console.log('Response data:', response.data);
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const text = await response.text();
-      console.log('Response text length:', text.length);
-      
-      if (!text) {
-        throw new Error('Respuesta vacía del servidor');
-      }
-      
-      const data = JSON.parse(text);
-      console.log('Parsed data:', data);
-      
-      if (!data.contenido) {
+      if (!response.data.contenido) {
         throw new Error('Contenido no disponible');
       }
       
-      setContent(data.contenido);
+      setContent(response.data.contenido);
     } catch (error) {
       console.error('Error fetching legal document:', error);
       setContent(`Error al cargar el documento: ${error instanceof Error ? error.message : 'Intenta nuevamente'}.`);
