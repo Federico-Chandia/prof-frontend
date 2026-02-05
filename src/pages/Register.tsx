@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -29,6 +29,23 @@ const Register: React.FC = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Cargar aceptaciones de localStorage al montar el componente
+  useEffect(() => {
+    const savedAcceptance = localStorage.getItem('legalAcceptance');
+    if (savedAcceptance) {
+      try {
+        const parsed = JSON.parse(savedAcceptance);
+        setLegalAcceptance(prev => ({
+          terminos: prev.terminos || parsed.terminos || false,
+          privacidad: prev.privacidad || parsed.privacidad || false,
+          cookies: prev.cookies || parsed.cookies || false,
+        }));
+      } catch (error) {
+        console.error('Error parsing legal acceptance from localStorage:', error);
+      }
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -366,7 +383,7 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/terminos-condiciones', '_blank');
+                      window.open('/api/legal/view/terminos-condiciones', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -395,7 +412,7 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/privacidad', '_blank');
+                      window.open('/api/legal/view/privacidad', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -424,7 +441,7 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('/api/legal/cookies', '_blank');
+                      window.open('/api/legal/view/cookies', '_blank');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
