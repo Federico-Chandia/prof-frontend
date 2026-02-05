@@ -41,18 +41,25 @@ const LegalDocumentModal: React.FC<LegalDocumentModalProps> = ({
     setAccepted(false);
     setHasScrolledToBottom(false);
     try {
+      console.log(`Fetching document from: ${docUrls[documentType]}`);
       const response = await fetch(docUrls[documentType]);
+      
+      console.log(`Response status: ${response.status}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const text = await response.text();
+      console.log('Response text length:', text.length);
+      
       if (!text) {
         throw new Error('Respuesta vacía del servidor');
       }
       
       const data = JSON.parse(text);
+      console.log('Parsed data:', data);
+      
       if (!data.contenido) {
         throw new Error('Contenido no disponible');
       }
