@@ -400,8 +400,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const base = (api.defaults.baseURL as string) || '/api';
-                      window.open(base.replace(/\/$/, '') + '/legal/view/terminos-condiciones', '_blank');
+                      const url = window.location.origin + '/api/legal/view/terminos-condiciones';
+                      window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -430,8 +430,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const base = (api.defaults.baseURL as string) || '/api';
-                      window.open(base.replace(/\/$/, '') + '/legal/view/privacidad', '_blank');
+                      const url = window.location.origin + '/api/legal/view/privacidad';
+                      window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
@@ -460,8 +460,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const base = (api.defaults.baseURL as string) || '/api';
-                      window.open(base.replace(/\/$/, '') + '/legal/view/cookies', '_blank');
+                      const url = window.location.origin + '/api/legal/view/cookies';
+                      window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
                   >
