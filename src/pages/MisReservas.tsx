@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Reserva } from '../types';
 import api from '../services/api';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -7,6 +8,7 @@ import ChatModalV2 from '../components/ChatModalV2';
 import ReviewModal from '../components/ReviewModal';
 
 const MisReservas: React.FC = () => {
+  const navigate = useNavigate();
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'activas' | 'historial' | 'favoritos'>('activas');
@@ -267,7 +269,10 @@ const MisReservas: React.FC = () => {
                 {getReservasActivas().length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-gray-500">No tienes reservas activas</p>
-                    <button className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    <button 
+                      onClick={() => navigate('/buscar')}
+                      className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+                    >
                       Buscar Profesionales
                     </button>
                   </div>
