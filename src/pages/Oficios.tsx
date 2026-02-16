@@ -160,7 +160,7 @@ const Oficios: React.FC = () => {
               <div className="flex-1 relative">
                 <input
                   type="text"
-                  placeholder="Buscar por nombre o profesión..."
+                  placeholder="Buscar por nombre..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"

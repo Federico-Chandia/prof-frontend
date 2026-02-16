@@ -133,6 +133,7 @@ const MiPerfil: React.FC = () => {
     if (searchParams.get('onboarding') === 'true') {
       setShowOnboarding(true);
       setEditMode(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, []);
 
@@ -509,7 +510,7 @@ const MiPerfil: React.FC = () => {
           </div>
           <button
             onClick={() => setEditMode(!editMode)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
             {editMode ? 'Cancelar' : 'Editar Perfil'}
           </button>
@@ -985,6 +986,19 @@ const MiPerfil: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Zonas de Trabajo */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Zonas de Trabajo</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Selecciona las zonas donde ofreces tus servicios
+              </p>
+              <ZonasTrabajoSelector
+                zonasSeleccionadas={formData.zonasTrabajo}
+                onChange={(zonas) => setFormData({...formData, zonasTrabajo: zonas})}
+                editMode={editMode}
+              />
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -1082,15 +1096,6 @@ const MiPerfil: React.FC = () => {
               items={getChecklistItems()}
               onItemClick={handleChecklistItemClick}
             />
-
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-4">Zonas de Trabajo</h3>
-              <ZonasTrabajoSelector
-                zonasSeleccionadas={formData.zonasTrabajo}
-                onChange={(zonas) => setFormData({...formData, zonasTrabajo: zonas})}
-                editMode={editMode}
-              />
-            </div>
           </div>
         </div>
 

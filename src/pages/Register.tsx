@@ -8,6 +8,7 @@ const Register: React.FC = () => {
     nombre: '',
     email: '',
     password: '',
+    confirmPassword: '',
     telefono: '',
     rol: 'cliente' as 'cliente' | 'profesional',
     direccion: {
@@ -20,6 +21,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   // Estados para aceptación de términos legales
   const [legalAcceptance, setLegalAcceptance] = useState({
@@ -97,6 +99,18 @@ const Register: React.FC = () => {
     return null;
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = () => {
+    if (formData.password !== formData.confirmPassword) {
+      return 'Las contraseñas no coinciden';
+    }
+    return null;
+  };
+
   const validateLegalAcceptance = () => {
     if (!legalAcceptance.terminos) {
       return 'Debes aceptar los Términos y Condiciones';
@@ -114,6 +128,17 @@ const Register: React.FC = () => {
     e.preventDefault();
     setError('');
     
+    if (!validateEmail(formData.email)) {
+      setError('Por favor ingresa un email válido');
+      return;
+    }
+
+    const passwordError = validatePassword();
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
     const addressError = validateAddress();
     if (addressError) {
       setError(addressError);
@@ -129,8 +154,9 @@ const Register: React.FC = () => {
     setLoading(true);
 
     try {
+      const { confirmPassword, ...dataToSend } = formData;
       const registerData = {
-        ...formData,
+        ...dataToSend,
         aceptacionLegal: {
           terminosCondiciones: {
             aceptado: legalAcceptance.terminos,
@@ -231,8 +257,13 @@ const Register: React.FC = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className={`mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                  formData.email && !validateEmail(formData.email) ? 'border-red-300' : 'border-gray-300'
+                }`}
               />
+              {formData.email && !validateEmail(formData.email) && (
+                <p className="mt-1 text-xs text-red-600">Email inválido</p>
+              )}
             </div>
 
             <div>
@@ -252,7 +283,7 @@ const Register: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center mt-1"
                 >
                   {showPassword ? (
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -269,6 +300,44 @@ const Register: React.FC = () => {
               <p className="mt-1 text-xs text-gray-500">
                 La contraseña debe contener al menos una mayúscula, una minúscula y un número
               </p>
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirmar Contraseña
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`mt-1 block w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                    formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center mt-1"
+                >
+                  {showConfirmPassword ? (
+                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                <p className="mt-1 text-xs text-red-600">Las contraseñas no coinciden</p>
+              )}
             </div>
 
             <div>
@@ -383,7 +452,6 @@ const Register: React.FC = () => {
             </p>
             
             <div className="space-y-3">
-              {/* Términos y Condiciones */}
               <div className="flex items-start">
                 <input
                   id="terminos"
@@ -400,7 +468,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const url = window.location.origin + '/api/legal/view/terminos-condiciones';
+                      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5003/api';
+                      const url = apiUrl.replace('/api', '') + '/api/legal/view/terminos-condiciones';
                       window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
@@ -430,7 +499,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const url = window.location.origin + '/api/legal/view/privacidad';
+                      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5003/api';
+                      const url = apiUrl.replace('/api', '') + '/api/legal/view/privacidad';
                       window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
@@ -460,7 +530,8 @@ const Register: React.FC = () => {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      const url = window.location.origin + '/api/legal/view/cookies';
+                      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5003/api';
+                      const url = apiUrl.replace('/api', '') + '/api/legal/view/cookies';
                       window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
                     }}
                     className="font-medium text-blue-600 hover:text-blue-500 underline"
