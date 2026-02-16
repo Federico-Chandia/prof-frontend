@@ -270,7 +270,7 @@ const MisReservas: React.FC = () => {
                   <div className="text-center py-8">
                     <p className="text-gray-500">No tienes reservas activas</p>
                     <button 
-                      onClick={() => navigate('/buscar')}
+                      onClick={() => navigate('/oficios')}
                       className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
                     >
                       Buscar Profesionales
