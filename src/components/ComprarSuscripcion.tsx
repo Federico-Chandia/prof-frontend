@@ -1,0 +1,212 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from './LoadingSpinner';
+
+interface Plan {
+  id: string;
+  nombre: string;
+  precio: number;
+  beneficios: string[];
+  recomendado?: boolean;
+}
+
+const planes: Plan[] = [
+  {
+    id: 'profesional',
+    nombre: 'Plan Profesional',
+    precio: 2999,
+    beneficios: [
+      '✓ Perfil verificado',
+      '✓ Prioridad estándar',
+      '✓ Estadísticas básicas',
+      '✓ Duración: 30 días'
+    ]
+  },
+  {
+    id: 'premium',
+    nombre: 'Plan Premium',
+    precio: 4999,
+    beneficios: [
+      '✓ Perfil verificado',
+      '✓ Prioridad máxima',
+      '✓ Estadísticas avanzadas',
+      '✓ Soporte prioritario',
+      '✓ Duración: 30 días'
+    ],
+    recomendado: true
+  }
+];
+
+const ComprarSuscripcion: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [planSeleccionado, setPlanSeleccionado] = useState<string>('premium');
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleComprar = async (planId: string) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (user.rol !== 'profesional') {
+      setError('Solo los profesionales pueden comprar suscripciones');
+      return;
+    }
+
+    setCargando(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/suscripcion`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ plan: planId })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al crear el pago');
+      }
+
+      const data = await response.json();
+
+      // Redirigir a Mercado Pago
+      if (data.initPoint) {
+        window.location.href = data.initPoint;
+      } else {
+        throw new Error('No se recibió el link de pago');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setCargando(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Upgrade a Premium
+          </h1>
+          <p className="text-xl text-gray-600">
+            Obtén más visibilidad y herramientas profesionales
+          </p>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            {error}
+          </div>
+        )}
+
+        {/* Info del usuario */}
+        {user && (
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-gray-700">
+              <strong>Comprador:</strong> {user.nombre} ({user.email})
+            </p>
+          </div>
+        )}
+
+        {/* Planes */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {planes.map((plan) => (
+            <div
+              key={plan.id}
+              className={`rounded-lg overflow-hidden transition-all ${
+                plan.recomendado
+                  ? 'ring-2 ring-blue-600 shadow-xl scale-105 md:scale-110'
+                  : 'border border-gray-200 shadow-md'
+              }`}
+            >
+              {/* Header del plan */}
+              <div className={`p-6 ${plan.recomendado ? 'bg-blue-600 text-white' : 'bg-gray-50'}`}>
+                <h2 className="text-2xl font-bold">{plan.nombre}</h2>
+                {plan.recomendado && (
+                  <div className="mt-2 inline-block bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
+                    Más Popular
+                  </div>
+                )}
+              </div>
+
+              {/* Precio */}
+              <div className={`px-6 py-8 ${plan.recomendado ? 'bg-blue-50' : 'bg-white'}`}>
+                <div className="mb-6">
+                  <span className="text-5xl font-bold text-gray-900">
+                    ${plan.precio.toLocaleString('es-AR')}
+                  </span>
+                  <span className="text-gray-600 ml-2">/mes</span>
+                </div>
+
+                {/* Beneficios */}
+                <ul className="space-y-3 mb-8">
+                  {plan.beneficios.map((beneficio, idx) => (
+                    <li key={idx} className="text-gray-700">
+                      {beneficio}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Botón de compra */}
+                <button
+                  onClick={() => handleComprar(plan.id)}
+                  disabled={cargando}
+                  className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
+                    plan.recomendado
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400'
+                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-300'
+                  } ${cargando ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  {cargando ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                      Procesando...
+                    </span>
+                  ) : (
+                    'Comprar ahora'
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Información adicional */}
+        <div className="bg-white rounded-lg border border-gray-200 p-8">
+          <h3 className="text-xl font-semibold mb-4">Preguntas frecuentes</h3>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">¿Por qué debo pagar?</h4>
+              <p className="text-gray-600">
+                Los planes premium te dan más visibilidad, mejor posicionamiento en búsquedas y herramientas profesionales para gestionar tus servicios.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">¿Puedo cancelar en cualquier momento?</h4>
+              <p className="text-gray-600">
+                Sí, tu suscripción se renueva cada 30 días. Puedes cancelar cuando quieras desde tu perfil.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">¿Qué métodos de pago aceptan?</h4>
+              <p className="text-gray-600">
+                Aceptamos tarjeta de crédito, débito y transferencia bancaria a través de Mercado Pago.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ComprarSuscripcion;

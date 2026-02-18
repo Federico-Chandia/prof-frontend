@@ -23,6 +23,10 @@ import AdminDashboard from './pages/AdminDashboard';
 import SocketTest from './pages/SocketTest';
 import DebugDashboard from './pages/DebugDashboard';
 import LandingProfesional from './pages/LandingProfesional';
+import SuscripcionExito from './pages/SuscripcionExito';
+import SuscripcionError from './pages/SuscripcionError';
+import SuscripcionPendiente from './pages/SuscripcionPendiente';
+import ComprarSuscripcion from './components/ComprarSuscripcion';
 
 // Componente para redirección automática según rol
 const RoleBasedRedirect: React.FC = () => {
@@ -80,6 +84,12 @@ function App() {
               <Route path="/email-confirmed" element={<EmailConfirmed />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
+              
+              {/* Rutas de suscripción */}
+              <Route path="/suscripcion" element={<ComprarSuscripcion />} />
+              <Route path="/suscripcion/exito" element={<SuscripcionExito />} />
+              <Route path="/suscripcion/error" element={<SuscripcionError />} />
+              <Route path="/suscripcion/pendiente" element={<SuscripcionPendiente />} />
               
               {/* Landing para profesionales y alias */}
               <Route path="/landing/profesionales" element={<LandingProfesional />} />

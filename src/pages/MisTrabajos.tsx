@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Reserva } from '../types';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -276,6 +277,16 @@ const MisTrabajos: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Botón Comprar Suscripción */}
+              {user?.planActual !== 'premium' && (
+                <Link
+                  to="/suscripcion"
+                  className="px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 transition-all shadow-md"
+                >
+                  ⭐ Upgrade Premium
+                </Link>
+              )}
+              
               {/* Toggle Vista */}
               <button
                 onClick={() => setShowCalendar(!showCalendar)}
