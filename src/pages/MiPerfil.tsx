@@ -728,20 +728,6 @@ const MiPerfil: React.FC = () => {
               )}
             </div>
 
-            {/* Zonas de Trabajo */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Zonas de Trabajo</h2>
-              <p className="text-sm text-gray-600 mb-4">
-                Selecciona las zonas donde ofreces tus servicios
-              </p>
-              <ZonasTrabajoSelector
-                zonasSeleccionadas={formData.zonasTrabajo}
-                onChange={(zonas) => setFormData({ ...formData, zonasTrabajo: zonas })}
-                editMode={editMode}
-              />
-            </div>
-          </div>
-
           {/* Disponibilidad Horaria */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Disponibilidad Horaria</h2>
@@ -1098,6 +1084,19 @@ const MiPerfil: React.FC = () => {
               items={getChecklistItems()}
               onItemClick={handleChecklistItemClick}
             />
+             {/* Zonas de Trabajo */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Zonas de Trabajo</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Selecciona las zonas donde ofreces tus servicios
+              </p>
+              <ZonasTrabajoSelector
+                zonasSeleccionadas={formData.zonasTrabajo}
+                onChange={(zonas) => setFormData({ ...formData, zonasTrabajo: zonas })}
+                editMode={editMode}
+              />
+            </div>
+          </div>
           </div>
         </div>
 
