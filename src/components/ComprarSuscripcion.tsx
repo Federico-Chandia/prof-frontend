@@ -60,6 +60,7 @@ const ComprarSuscripcion: React.FC = () => {
     setError(null);
 
     try {
+      // Primero registrar el Payment en el backend para tener trazabilidad
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/suscripcion`, {
         method: 'POST',
         headers: {
@@ -76,7 +77,18 @@ const ComprarSuscripcion: React.FC = () => {
 
       const data = await response.json();
 
-      // Redirigir a Mercado Pago
+      // Para suscripciones preaprobadas (plans del dashboard de MP) redirigimos
+      if (planId === 'profesional' || planId === 'premium') {
+        const planUrl = planId === 'profesional'
+          ? (import.meta.env.VITE_MP_PROFESIONAL_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=6dbd2e8163e140768b1c16d2b35358bb')
+          : (import.meta.env.VITE_MP_PREMIUM_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2293dd4fe51f416f9ad9d569e63c9bc9');
+
+        // Si el backend devolvió initPoint (por compatibilidad), preferirlo solo para pagos clásicos
+        window.location.href = planUrl;
+        return;
+      }
+
+      // Flujo por defecto: usar initPoint retornado por el backend
       if (data.initPoint) {
         window.location.href = data.initPoint;
       } else {
@@ -141,10 +153,26 @@ const ComprarSuscripcion: React.FC = () => {
               {/* Precio */}
               <div className={`px-6 py-8 ${plan.recomendado ? 'bg-blue-50' : 'bg-white'}`}>
                 <div className="mb-6">
-                  <span className="text-5xl font-bold text-gray-900">
-                    ${plan.precio.toLocaleString('es-AR')}
-                  </span>
-                  <span className="text-gray-600 ml-2">/mes</span>
+                  {/* Precios: mostrar precio anterior tachado y precio promocional */}
+                  {(() => {
+                    const envKey = plan.id === 'profesional'
+                      ? import.meta.env.VITE_PROMO_PRICE_PROFESIONAL
+                      : import.meta.env.VITE_PROMO_PRICE_PREMIUM;
+                    const promo = envKey ? Number(envKey) : undefined;
+                    const promoPrice = promo && !Number.isNaN(promo) ? promo : plan.precio;
+                    return (
+                      <div>
+                        <div className="text-sm text-gray-500 mb-1">
+                          <span className="line-through mr-3">${plan.precio.toLocaleString('es-AR')}</span>
+                          <span className="text-gray-700">/mes</span>
+                        </div>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-5xl font-bold text-gray-900">${promoPrice.toLocaleString('es-AR')}</span>
+                          <span className="text-sm text-red-600 font-semibold">Por tiempo limitado</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Beneficios */}

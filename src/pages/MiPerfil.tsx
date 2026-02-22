@@ -18,13 +18,13 @@ type SubcategoryFieldProps = {
 };
 
 const SUBCATEGORIES: Record<string, string[]> = {
-  'Plomería': ['Pérdidas de agua', 'Destapaciones', 'Reparación de cañerías', 'Termotanques', 'Grifería', 'Sanitarios'],
-  'Electricidad': ['Cortes de luz', 'Instalaciones eléctricas', 'Cortocircuitos', 'Tableros eléctricos', 'Iluminación'],
-  'Gas': ['Instalaciones', 'Reparaciones', 'Pérdidas de gas', 'Revisión de seguridad', 'Calderas'],
-  'Cerrajería': ['Apertura de puertas', 'Cambio de cerraduras', 'Llaves perdidas', 'Cerraduras de seguridad'],
-  'Albañilería': ['Reparaciones generales', 'Revoques', 'Humedad', 'Pequeñas obras'],
-  'Aire acondicionado': ['Instalación', 'Reparación', 'Carga de gas', 'Mantenimiento'],
-  'Pintura': ['Pintura interiores', 'Pintura exteriores', 'Barnizado']
+  'Plomería': ['Pérdidas de agua','Destapaciones','Reparación de cañerías','Termotanques','Grifería','Sanitarios'],
+  'Electricidad': ['Cortes de luz','Instalaciones eléctricas','Cortocircuitos','Tableros eléctricos','Iluminación'],
+  'Gas': ['Instalaciones','Reparaciones','Pérdidas de gas','Revisión de seguridad','Calderas'],
+  'Cerrajería': ['Apertura de puertas','Cambio de cerraduras','Llaves perdidas','Cerraduras de seguridad'],
+  'Albañilería': ['Reparaciones generales','Revoques','Humedad','Pequeñas obras'],
+  'Aire acondicionado': ['Instalación','Reparación','Carga de gas','Mantenimiento'],
+  'Pintura': ['Pintura interiores','Pintura exteriores','Barnizado']
 };
 
 // Mapear etiquetas human-readable a los slugs aceptados por el backend
@@ -38,7 +38,7 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
   'Pintura': 'servicios-hogar'
 };
 
-const ALLOWED_PROFESIONS = new Set(['plomero', 'electricista', 'gasista', 'pintor', 'albanil', 'cerrajero', 'aire-acondicionado']);
+const ALLOWED_PROFESIONS = new Set(['plomero','electricista','gasista','pintor','albanil','cerrajero','aire-acondicionado']);
 
 const SLUG_TO_CATEGORY: Record<string, string> = Object.keys(CATEGORY_TO_SLUG).reduce((acc, key) => {
   const slug = CATEGORY_TO_SLUG[key];
@@ -90,7 +90,7 @@ const MiPerfil: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [profileCompletion, setProfileCompletion] = useState({ percentage: 0, missingFields: [] as string[] });
   const [userTokens, setUserTokens] = useState({ remaining: 5, plan: 'basico' as 'basico' | 'profesional' | 'premium' });
@@ -148,7 +148,7 @@ const MiPerfil: React.FC = () => {
     calculateProfileCompletion();
   }, [formData, oficio]);
 
-  const calculateProfileCompletion = () => {
+    const calculateProfileCompletion = () => {
     const requiredFields = [
       { key: 'descripcion', label: 'Descripción de servicios' },
       { key: 'tarifas.porHora', label: 'Tarifa por hora' },
@@ -166,10 +166,10 @@ const MiPerfil: React.FC = () => {
     let completedOptional = 0;
 
     requiredFields.forEach(field => {
-      const value = field.key.includes('.')
-        ? formData.tarifas?.porHora
+      const value = field.key.includes('.') 
+        ? formData.tarifas?.porHora 
         : formData[field.key as keyof typeof formData];
-
+      
       if (!value || (Array.isArray(value) && value.length === 0) || value === 0) {
         missingFields.push(field.label);
       } else {
@@ -209,7 +209,7 @@ const MiPerfil: React.FC = () => {
     setSearchParams({});
   };
 
-  const getChecklistItems = () => {
+    const getChecklistItems = () => {
     return [
       {
         id: 'descripcion',
@@ -268,7 +268,7 @@ const MiPerfil: React.FC = () => {
       try {
         const response = await api.get('/oficios/mi-perfil');
         const miOficio = response.data.oficio;
-
+        
         setOficio(miOficio);
         setPortfolioFotos(miOficio.fotos || []);
         setFormData({
@@ -298,7 +298,7 @@ const MiPerfil: React.FC = () => {
           ...prev,
           nombreCompleto: user?.nombre || '',
           telefono: user?.telefono || ''
-          ,
+        ,
           categoriaPrincipal: prev.categoriaPrincipal || '',
           subcategoria: prev.subcategoria || ''
         }));
@@ -332,11 +332,11 @@ const MiPerfil: React.FC = () => {
   const fetchEstadisticas = async (oficioId: string) => {
     try {
       console.log('Fetching estadisticas for oficio:', oficioId);
-
+      
       // Obtener reservas del oficio
       let reservas = [];
       let reviews = [];
-
+      
       try {
         // Obtener todas las reservas del usuario (como oficio)
         const reservasRes = await api.get('/reservas?tipo=profesional');
@@ -346,7 +346,7 @@ const MiPerfil: React.FC = () => {
         console.log('Error obteniendo reservas:', err);
         reservas = [];
       }
-
+      
       try {
         // Obtener reviews del oficio
         const reviewsRes = await api.get(`/reviews/oficio/${oficioId}`);
@@ -356,31 +356,31 @@ const MiPerfil: React.FC = () => {
         console.log('Error obteniendo reviews:', err);
         reviews = [];
       }
-
+      
       // Calcular estadísticas
       const trabajosCompletados = reservas.filter(r => r.estado === 'completada').length;
-
+      
       const ahora = new Date();
       const ingresosMes = reservas
         .filter(r => {
           if (r.estado !== 'completada') return false;
           const fecha = new Date(r.fechaHora);
-          return fecha.getMonth() === ahora.getMonth() &&
-            fecha.getFullYear() === ahora.getFullYear();
+          return fecha.getMonth() === ahora.getMonth() && 
+                 fecha.getFullYear() === ahora.getFullYear();
         })
         .reduce((total, r) => total + (r.costos?.total || 0), 0);
-
-      const ratingPromedio = reviews.length > 0
-        ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length
+      
+      const ratingPromedio = reviews.length > 0 
+        ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
         : 0;
-
+      
       const nuevasEstadisticas = {
         totalTrabajos: trabajosCompletados,
         ingresosMes: Math.round(ingresosMes),
         ratingPromedio: Math.round(ratingPromedio * 10) / 10,
         totalReviews: reviews.length
       };
-
+      
       console.log('Estadisticas calculadas:', nuevasEstadisticas);
       setEstadisticas(nuevasEstadisticas);
       setUltimasReviews(reviews.slice(-3).reverse());
@@ -449,9 +449,9 @@ const MiPerfil: React.FC = () => {
       setEditMode(false);
     } catch (error: any) {
       console.error('Error saving perfil:', error);
-      const errorMsg = error.response?.data?.errors?.[0]?.msg ||
-        error.response?.data?.message ||
-        'Error al guardar el perfil';
+      const errorMsg = error.response?.data?.errors?.[0]?.msg || 
+                      error.response?.data?.message || 
+                      'Error al guardar el perfil';
       setMessage({ type: 'error', text: errorMsg });
     } finally {
       setSaving(false);
@@ -464,7 +464,7 @@ const MiPerfil: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
-        setFormData({ ...formData, fotoPerfil: result });
+        setFormData({...formData, fotoPerfil: result});
       };
       reader.readAsDataURL(file);
     }
@@ -488,7 +488,7 @@ const MiPerfil: React.FC = () => {
 
         {/* Profile Progress */}
         {user?.rol === 'profesional' && (
-          <ProfileProgress
+          <ProfileProgress 
             completionPercentage={profileCompletion.percentage}
             missingFields={profileCompletion.missingFields}
           />
@@ -496,7 +496,7 @@ const MiPerfil: React.FC = () => {
 
         {/* Pricing Banner */}
         {user?.rol === 'profesional' && (
-          <PricingBanner
+          <PricingBanner 
             currentPlan={userTokens.plan}
             tokensRemaining={userTokens.remaining}
             onUpgrade={handleUpgradePlan}
@@ -521,7 +521,7 @@ const MiPerfil: React.FC = () => {
             {/* Información Personal */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-lg font-semibold mb-4">Información Personal</h2>
-
+              
               {editMode ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
@@ -546,7 +546,7 @@ const MiPerfil: React.FC = () => {
                       </label>
                     </div>
                   </div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -555,11 +555,11 @@ const MiPerfil: React.FC = () => {
                       <input
                         type="text"
                         value={formData.nombreCompleto}
-                        onChange={(e) => setFormData({ ...formData, nombreCompleto: e.target.value })}
+                        onChange={(e) => setFormData({...formData, nombreCompleto: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
-
+                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Teléfono
@@ -567,11 +567,11 @@ const MiPerfil: React.FC = () => {
                       <input
                         type="tel"
                         value={formData.telefono}
-                        onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                        onChange={(e) => setFormData({...formData, telefono: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
-
+                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         WhatsApp Laboral (opcional)
@@ -579,7 +579,7 @@ const MiPerfil: React.FC = () => {
                       <input
                         type="tel"
                         value={formData.whatsappLaboral}
-                        onChange={(e) => setFormData({ ...formData, whatsappLaboral: e.target.value })}
+                        onChange={(e) => setFormData({...formData, whatsappLaboral: e.target.value})}
                         placeholder="+54 9 11 1234-5678"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />
@@ -603,19 +603,19 @@ const MiPerfil: React.FC = () => {
                       <p className="text-gray-600 capitalize">{oficio?.tipoOficio}</p>
                     </div>
                   </div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <span className="text-sm text-gray-500">Teléfono:</span>
                       <p className="font-medium">{formData.telefono || 'No especificado'}</p>
                     </div>
-
+                    
                     {formData.whatsappLaboral && (
                       <div>
                         <span className="text-sm text-gray-500">WhatsApp Laboral:</span>
                         <p className="font-medium flex items-center gap-2">
                           {formData.whatsappLaboral}
-                          <a
+                          <a 
                             href={`https://wa.me/${formData.whatsappLaboral.replace(/[^0-9]/g, '')}`}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -630,11 +630,11 @@ const MiPerfil: React.FC = () => {
                 </div>
               )}
             </div>
-
+            
             {/* Descripción de Servicios */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-lg font-semibold mb-4">Descripción de Servicios</h2>
-
+              
               {editMode ? (
                 <div className="space-y-4">
                   <div>
@@ -643,13 +643,13 @@ const MiPerfil: React.FC = () => {
                     </label>
                     <textarea
                       value={formData.descripcion}
-                      onChange={(e) => setFormData({ ...formData, descripcion: e.target.value, tipoOficio: 'electricista' })}
+                      onChange={(e) => setFormData({...formData, descripcion: e.target.value, tipoOficio: 'electricista'})}
                       rows={4}
                       placeholder="Describe los servicios eléctricos que ofreces, tu experiencia y especialidades..."
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -658,11 +658,11 @@ const MiPerfil: React.FC = () => {
                       <input
                         type="number"
                         value={formData.experiencia}
-                        onChange={(e) => setFormData({ ...formData, experiencia: parseInt(e.target.value) })}
+                        onChange={(e) => setFormData({...formData, experiencia: parseInt(e.target.value)})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
-
+                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Matrícula Profesional
@@ -670,18 +670,18 @@ const MiPerfil: React.FC = () => {
                       <input
                         type="text"
                         value={formData.matricula}
-                        onChange={(e) => setFormData({ ...formData, matricula: e.target.value })}
+                        onChange={(e) => setFormData({...formData, matricula: e.target.value})}
                         placeholder="Ej: MP-12345"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
-
+                  
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       checked={formData.seguroResponsabilidad}
-                      onChange={(e) => setFormData({ ...formData, seguroResponsabilidad: e.target.checked })}
+                      onChange={(e) => setFormData({...formData, seguroResponsabilidad: e.target.checked})}
                       className="mr-2"
                     />
                     <label className="text-sm text-gray-700">
@@ -695,18 +695,18 @@ const MiPerfil: React.FC = () => {
                     <span className="text-sm text-gray-500">Categoría:</span>
                     <p className="font-medium text-lg">Electricista</p>
                   </div>
-
+                  
                   <div>
                     <span className="text-sm text-gray-500">Descripción:</span>
                     <p className="text-gray-700 mt-1">{oficio?.descripcion || 'No hay descripción'}</p>
                   </div>
-
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <span className="text-sm text-gray-500">Experiencia:</span>
                       <p className="font-medium">{oficio?.experiencia || 0} años</p>
                     </div>
-
+                    
                     {formData.matricula && (
                       <div>
                         <span className="text-sm text-gray-500">Matrícula:</span>
@@ -717,7 +717,7 @@ const MiPerfil: React.FC = () => {
                       </div>
                     )}
                   </div>
-
+                  
                   {formData.seguroResponsabilidad && (
                     <div className="flex items-center text-green-600">
                       <span className="mr-2">🛡️</span>
@@ -727,267 +727,266 @@ const MiPerfil: React.FC = () => {
                 </div>
               )}
             </div>
-
-          {/* Disponibilidad Horaria */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Disponibilidad Horaria</h2>
-
-            {editMode ? (
-              <div className="space-y-3">
-                {Object.entries(formData.disponibilidadHoraria).map(([dia, horario]) => (
-                  <div key={dia} className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg">
-                    <div className="w-20">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={horario.activo}
-                          onChange={(e) => setFormData({
-                            ...formData,
-                            disponibilidadHoraria: {
-                              ...formData.disponibilidadHoraria,
-                              [dia]: { ...horario, activo: e.target.checked }
-                            }
-                          })}
-                          className="mr-2"
-                        />
-                        <span className="text-sm font-medium capitalize">{dia}</span>
-                      </label>
-                    </div>
-
-                    {horario.activo && (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="time"
-                          value={horario.inicio}
-                          onChange={(e) => setFormData({
-                            ...formData,
-                            disponibilidadHoraria: {
-                              ...formData.disponibilidadHoraria,
-                              [dia]: { ...horario, inicio: e.target.value }
-                            }
-                          })}
-                          className="px-2 py-1 border border-gray-300 rounded text-sm"
-                        />
-                        <span className="text-gray-500">a</span>
-                        <input
-                          type="time"
-                          value={horario.fin}
-                          onChange={(e) => setFormData({
-                            ...formData,
-                            disponibilidadHoraria: {
-                              ...formData.disponibilidadHoraria,
-                              [dia]: { ...horario, fin: e.target.value }
-                            }
-                          })}
-                          className="px-2 py-1 border border-gray-300 rounded text-sm"
-                        />
+            
+            {/* Disponibilidad Horaria */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Disponibilidad Horaria</h2>
+              
+              {editMode ? (
+                <div className="space-y-3">
+                  {Object.entries(formData.disponibilidadHoraria).map(([dia, horario]) => (
+                    <div key={dia} className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg">
+                      <div className="w-20">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={horario.activo}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              disponibilidadHoraria: {
+                                ...formData.disponibilidadHoraria,
+                                [dia]: { ...horario, activo: e.target.checked }
+                              }
+                            })}
+                            className="mr-2"
+                          />
+                          <span className="text-sm font-medium capitalize">{dia}</span>
+                        </label>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {Object.entries(formData.disponibilidadHoraria).map(([dia, horario]) => (
-                  <div key={dia} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium capitalize">{dia}</span>
-                    {horario.activo ? (
-                      <span className="text-sm text-gray-600">
-                        {horario.inicio} - {horario.fin}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-red-600">No disponible</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Tarifas */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Tarifas y Cobertura</h2>
-
-            {editMode ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Por Hora ($) *
-                      <span className="text-xs text-gray-500 block">Tarifa estándar por hora de trabajo</span>
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.tarifas.porHora}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        tarifas: { ...formData.tarifas, porHora: parseInt(e.target.value) }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Ej: 3000"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Visita Técnica ($)
-                      <span className="text-xs text-gray-500 block">Costo por evaluación inicial</span>
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.tarifas.visitaTecnica}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        tarifas: { ...formData.tarifas, visitaTecnica: parseInt(e.target.value) }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Ej: 1500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Emergencia ($)
-                      <span className="text-xs text-gray-500 block">Tarifa adicional fuera de horario</span>
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.tarifas.emergencia}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        tarifas: { ...formData.tarifas, emergencia: parseInt(e.target.value) }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Ej: 5000"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Área de Cobertura
-                    <span className="text-xs text-gray-500 block">Distancia máxima que estás dispuesto a viajar</span>
-                  </label>
-                  <select
-                    value={formData.radioCobertura}
-                    onChange={(e) => setFormData({ ...formData, radioCobertura: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value={10}>10km - Zona local</option>
-                    <option value={20}>20km - Zona metropolitana</option>
-                    <option value={50}>50km - Zona extendida</option>
-                    <option value={100}>+50km - Sin límite</option>
-                  </select>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600">${oficio?.tarifas.porHora}</p>
-                    <p className="text-sm text-gray-600">Por Hora</p>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-green-600">${oficio?.tarifas.visitaTecnica}</p>
-                    <p className="text-sm text-gray-600">Visita Técnica</p>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-red-600">${oficio?.tarifas.emergencia}</p>
-                    <p className="text-sm text-gray-600">Emergencia</p>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Área de Cobertura:</span>
-                    <span className="text-lg font-bold text-blue-600">
-                      {oficio?.radioCobertura || 20}km
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {(oficio?.radioCobertura || 20) <= 10 ? 'Zona local' :
-                      (oficio?.radioCobertura || 20) <= 20 ? 'Zona metropolitana' :
-                        (oficio?.radioCobertura || 20) <= 50 ? 'Zona extendida' : 'Sin límite'}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Últimas Reseñas */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Últimas Reseñas</h2>
-            {ultimasReviews.length > 0 ? (
-              <div className="space-y-4">
-                {ultimasReviews.map((review, index) => (
-                  <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center">
-                        <span className="font-medium text-gray-900">{review.cliente?.nombre || 'Cliente'}</span>
-                        <div className="flex ml-2">
-                          {[...Array(5)].map((_, i) => (
-                            <span key={i} className={`text-sm ${i < review.puntuacion ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
-                          ))}
+                      
+                      {horario.activo && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="time"
+                            value={horario.inicio}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              disponibilidadHoraria: {
+                                ...formData.disponibilidadHoraria,
+                                [dia]: { ...horario, inicio: e.target.value }
+                              }
+                            })}
+                            className="px-2 py-1 border border-gray-300 rounded text-sm"
+                          />
+                          <span className="text-gray-500">a</span>
+                          <input
+                            type="time"
+                            value={horario.fin}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              disponibilidadHoraria: {
+                                ...formData.disponibilidadHoraria,
+                                [dia]: { ...horario, fin: e.target.value }
+                              }
+                            })}
+                            className="px-2 py-1 border border-gray-300 rounded text-sm"
+                          />
                         </div>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(review.createdAt).toLocaleDateString('es-AR')}
-                      </span>
+                      )}
                     </div>
-                    {review.comentario && (
-                      <p className="text-gray-700 text-sm">{review.comentario}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>Aún no tienes reseñas</p>
-                <p className="text-sm mt-1">Completa trabajos para recibir las primeras reseñas de tus clientes</p>
-              </div>
-            )}
-          </div>
-
-          {/* Portfolio de Trabajos */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Portfolio de Trabajos</h2>
-              <label className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer relative overflow-hidden">
-                Agregar Foto
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handlePortfolioUpload}
-                  className="hidden"
-                />
-              </label>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {portfolioFotos.length > 0 ? (
-                portfolioFotos.map((foto, index) => (
-                  <div key={index} className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                    <img src={foto} alt={`Trabajo ${index + 1}`} className="w-full h-full object-cover" />
-                    <button
-                      onClick={() => removePortfolioPhoto(index)}
-                      className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-75"
-                      title="Eliminar foto"
-                      type="button"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))
+                  ))}
+                </div>
               ) : (
-                <div className="aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  <span className="text-gray-400 text-4xl">+</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {Object.entries(formData.disponibilidadHoraria).map(([dia, horario]) => (
+                    <div key={dia} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <span className="font-medium capitalize">{dia}</span>
+                      {horario.activo ? (
+                        <span className="text-sm text-gray-600">
+                          {horario.inicio} - {horario.fin}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-red-600">No disponible</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
+
+            {/* Tarifas */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Tarifas y Cobertura</h2>
+              
+              {editMode ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Por Hora ($) *
+                        <span className="text-xs text-gray-500 block">Tarifa estándar por hora de trabajo</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.tarifas.porHora}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          tarifas: {...formData.tarifas, porHora: parseInt(e.target.value)}
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ej: 3000"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Visita Técnica ($)
+                        <span className="text-xs text-gray-500 block">Costo por evaluación inicial</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.tarifas.visitaTecnica}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          tarifas: {...formData.tarifas, visitaTecnica: parseInt(e.target.value)}
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ej: 1500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Emergencia ($)
+                        <span className="text-xs text-gray-500 block">Tarifa adicional fuera de horario</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.tarifas.emergencia}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          tarifas: {...formData.tarifas, emergencia: parseInt(e.target.value)}
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ej: 5000"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Área de Cobertura
+                      <span className="text-xs text-gray-500 block">Distancia máxima que estás dispuesto a viajar</span>
+                    </label>
+                    <select
+                      value={formData.radioCobertura}
+                      onChange={(e) => setFormData({...formData, radioCobertura: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value={10}>10km - Zona local</option>
+                      <option value={20}>20km - Zona metropolitana</option>
+                      <option value={50}>50km - Zona extendida</option>
+                      <option value={100}>+50km - Sin límite</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">${oficio?.tarifas.porHora}</p>
+                      <p className="text-sm text-gray-600">Por Hora</p>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-green-600">${oficio?.tarifas.visitaTecnica}</p>
+                      <p className="text-sm text-gray-600">Visita Técnica</p>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-2xl font-bold text-red-600">${oficio?.tarifas.emergencia}</p>
+                      <p className="text-sm text-gray-600">Emergencia</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Área de Cobertura:</span>
+                      <span className="text-lg font-bold text-blue-600">
+                        {oficio?.radioCobertura || 20}km
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {(oficio?.radioCobertura || 20) <= 10 ? 'Zona local' : 
+                       (oficio?.radioCobertura || 20) <= 20 ? 'Zona metropolitana' : 
+                       (oficio?.radioCobertura || 20) <= 50 ? 'Zona extendida' : 'Sin límite'}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Últimas Reseñas */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Últimas Reseñas</h2>
+              {ultimasReviews.length > 0 ? (
+                <div className="space-y-4">
+                  {ultimasReviews.map((review, index) => (
+                    <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900">{review.cliente?.nombre || 'Cliente'}</span>
+                          <div className="flex ml-2">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`text-sm ${i < review.puntuacion ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                            ))}
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {new Date(review.createdAt).toLocaleDateString('es-AR')}
+                        </span>
+                      </div>
+                      {review.comentario && (
+                        <p className="text-gray-700 text-sm">{review.comentario}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p>Aún no tienes reseñas</p>
+                  <p className="text-sm mt-1">Completa trabajos para recibir las primeras reseñas de tus clientes</p>
+                </div>
+              )}
+            </div>
+
+            {/* Portfolio de Trabajos */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Portfolio de Trabajos</h2>
+                <label className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer relative overflow-hidden">
+                  Agregar Foto
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handlePortfolioUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {portfolioFotos.length > 0 ? (
+                  portfolioFotos.map((foto, index) => (
+                    <div key={index} className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                      <img src={foto} alt={`Trabajo ${index + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => removePortfolioPhoto(index)}
+                        className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-75"
+                        title="Eliminar foto"
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <span className="text-gray-400 text-4xl">+</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-
-
 
           {/* Sidebar */}
           <div className="space-y-6">
@@ -1019,7 +1018,7 @@ const MiPerfil: React.FC = () => {
                   <span className="font-medium">{estadisticas.totalReviews}</span>
                 </div>
               </div>
-
+              
               {/* Contacto Rápido */}
               <div className="mt-6 pt-4 border-t">
                 <h4 className="font-semibold mb-3">Contacto</h4>
@@ -1080,30 +1079,27 @@ const MiPerfil: React.FC = () => {
             </div>
 
             {/* Profile Checklist */}
-            <ProfileChecklist
+            <ProfileChecklist 
               items={getChecklistItems()}
               onItemClick={handleChecklistItemClick}
             />
-             {/* Zonas de Trabajo */}
+
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Zonas de Trabajo</h2>
-              <p className="text-sm text-gray-600 mb-4">
-                Selecciona las zonas donde ofreces tus servicios
-              </p>
+              <h3 className="font-semibold mb-4">Zonas de Trabajo</h3>
               <ZonasTrabajoSelector
                 zonasSeleccionadas={formData.zonasTrabajo}
-                onChange={(zonas) => setFormData({ ...formData, zonasTrabajo: zonas })}
+                onChange={(zonas) => setFormData({...formData, zonasTrabajo: zonas})}
                 editMode={editMode}
               />
             </div>
-          </div>
           </div>
         </div>
 
         {/* Mensaje de estado */}
         {message && (
-          <div className={`mt-4 p-4 rounded-md ${message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-            }`}>
+          <div className={`mt-4 p-4 rounded-md ${
+            message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+          }`}>
             {message.text}
           </div>
         )}
