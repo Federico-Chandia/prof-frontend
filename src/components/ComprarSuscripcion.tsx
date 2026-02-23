@@ -8,6 +8,7 @@ interface Plan {
   id: string;
   nombre: string;
   precio: number;
+  precioOriginal: number;
   beneficios: string[];
   recomendado?: boolean;
 }
@@ -16,7 +17,8 @@ const planes: Plan[] = [
   {
     id: 'profesional',
     nombre: 'Plan Profesional',
-    precio: 2999,
+    precio: 5000,
+    precioOriginal: 24999,
     beneficios: [
       '✓ Perfil verificado',
       '✓ Prioridad estándar',
@@ -27,7 +29,8 @@ const planes: Plan[] = [
   {
     id: 'premium',
     nombre: 'Plan Premium',
-    precio: 4999,
+    precio: 10000,
+    precioOriginal: 49999,
     beneficios: [
       '✓ Perfil verificado',
       '✓ Prioridad máxima',
@@ -132,26 +135,14 @@ const ComprarSuscripcion: React.FC = () => {
               {/* Precio */}
               <div className={`px-6 py-8 ${plan.recomendado ? 'bg-blue-50' : 'bg-white'}`}>
                 <div className="mb-6">
-                  {/* Precios: mostrar precio anterior tachado y precio promocional */}
-                  {(() => {
-                    const envKey = plan.id === 'profesional'
-                      ? import.meta.env.VITE_PROMO_PRICE_PROFESIONAL
-                      : import.meta.env.VITE_PROMO_PRICE_PREMIUM;
-                    const promo = envKey ? Number(envKey) : undefined;
-                    const promoPrice = promo && !Number.isNaN(promo) ? promo : plan.precio;
-                    return (
-                      <div>
-                        <div className="text-sm text-gray-500 mb-1">
-                          <span className="line-through mr-3">${plan.precio.toLocaleString('es-AR')}</span>
-                          <span className="text-gray-700">/mes</span>
-                        </div>
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-5xl font-bold text-gray-900">${promoPrice.toLocaleString('es-AR')}</span>
-                          <span className="text-sm text-red-600 font-semibold">Por tiempo limitado</span>
-                        </div>
-                      </div>
-                    );
-                  })()}
+                  <div className="text-sm text-gray-500 mb-1">
+                    <span className="line-through mr-3">${plan.precioOriginal.toLocaleString('es-AR')}</span>
+                    <span className="text-gray-700">/mes</span>
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl font-bold text-gray-900">${plan.precio.toLocaleString('es-AR')}</span>
+                    <span className="text-sm text-red-600 font-semibold">Por tiempo limitado</span>
+                  </div>
                 </div>
 
                 {/* Beneficios */}
