@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
+import api from '../services/api';
 
 interface Plan {
   id: string;
@@ -61,21 +62,8 @@ const ComprarSuscripcion: React.FC = () => {
 
     try {
       // Primero registrar el Payment en el backend para tener trazabilidad
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/suscripcion`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ plan: planId })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al crear el pago');
-      }
-
-      const data = await response.json();
+      const response = await api.post('/payments/suscripcion', { plan: planId });
+      const data = response.data;
 
       // Para suscripciones preaprobadas (plans del dashboard de MP) redirigimos
       if (planId === 'profesional' || planId === 'premium') {
