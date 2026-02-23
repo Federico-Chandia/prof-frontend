@@ -61,29 +61,20 @@ const ComprarSuscripcion: React.FC = () => {
     setError(null);
 
     try {
-      // Primero registrar el Payment en el backend para tener trazabilidad
+      // Registrar el pago en el backend
       const response = await api.post('/payments/suscripcion', { plan: planId });
-      const data = response.data;
-
-      // Para suscripciones preaprobadas (plans del dashboard de MP) redirigimos
-      if (planId === 'profesional' || planId === 'premium') {
+      
+      if (response.data.success) {
+        // Redirigir a la URL de MercadoPago según el plan
         const planUrl = planId === 'profesional'
           ? (import.meta.env.VITE_MP_PROFESIONAL_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=6dbd2e8163e140768b1c16d2b35358bb')
           : (import.meta.env.VITE_MP_PREMIUM_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2293dd4fe51f416f9ad9d569e63c9bc9');
-
-        // Si el backend devolvió initPoint (por compatibilidad), preferirlo solo para pagos clásicos
+        
         window.location.href = planUrl;
-        return;
-      }
-
-      // Flujo por defecto: usar initPoint retornado por el backend
-      if (data.initPoint) {
-        window.location.href = data.initPoint;
-      } else {
-        throw new Error('No se recibió el link de pago');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      console.error('Error al crear suscripción:', err);
+      setError(err instanceof Error ? err.message : 'Error al procesar el pago');
       setCargando(false);
     }
   };
