@@ -120,11 +120,13 @@ const MiPerfil: React.FC = () => {
     zonasTrabajo: [] as string[],
     certificaciones: [] as string[],
     matricula: '',
-    seguroResponsabilidad: false
-    ,
+    seguroResponsabilidad: false,
     // Categorías: principal y subcategoria (subcategoria puede ser texto libre si no hay opciones)
     categoriaPrincipal: '',
-    subcategoria: ''
+    subcategoria: '',
+    // Preferencias de género
+    genero: 'prefiero_no_decir' as 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir',
+    preferenciaProfesional: 'sin_preferencia' as 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres'
   });
 
   useEffect(() => {
@@ -287,7 +289,9 @@ const MiPerfil: React.FC = () => {
           zonasTrabajo: miOficio.zonasTrabajo,
           certificaciones: miOficio.certificaciones,
           matricula: miOficio.matricula || '',
-          seguroResponsabilidad: miOficio.seguroResponsabilidad || false
+          seguroResponsabilidad: miOficio.seguroResponsabilidad || false,
+          genero: miOficio.usuario.genero || 'prefiero_no_decir',
+          preferenciaProfesional: miOficio.preferenciaProfesional || 'sin_preferencia'
         });
         await fetchEstadisticas(miOficio._id);
       } catch (err) {
@@ -626,6 +630,70 @@ const MiPerfil: React.FC = () => {
                         </p>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Preferencias de Comodidad */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Preferencias de Comodidad (Opcional)</h2>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+                <p className="text-sm text-blue-800">
+                  Algunos clientes pueden tener preferencias de género por comodidad personal. Esto no afecta tu visibilidad ni oportunidades: si un cliente prefiere otro perfil, simplemente no te aparecerá esa solicitud específica, pero seguís visible para todos los demás.
+                </p>
+              </div>
+              
+              {editMode ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tu género (opcional)
+                    </label>
+                    <select
+                      value={formData.genero}
+                      onChange={(e) => setFormData({...formData, genero: e.target.value as any})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="prefiero_no_decir">Prefiero no decir</option>
+                      <option value="femenino">Femenino</option>
+                      <option value="masculino">Masculino</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ¿Deseas indicar alguna preferencia sobre tus clientes? (opcional)
+                    </label>
+                    <select
+                      value={formData.preferenciaProfesional}
+                      onChange={(e) => setFormData({...formData, preferenciaProfesional: e.target.value as any})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="sin_preferencia">Sin preferencia</option>
+                      <option value="solo_mujeres">Solo acepto clientes mujeres</option>
+                      <option value="solo_hombres">Solo acepto clientes hombres</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-sm text-gray-500">Género:</span>
+                    <p className="font-medium">
+                      {formData.genero === 'prefiero_no_decir' ? 'No especificado' :
+                       formData.genero === 'femenino' ? 'Femenino' :
+                       formData.genero === 'masculino' ? 'Masculino' : 'Otro'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-500">Preferencia de clientes:</span>
+                    <p className="font-medium">
+                      {formData.preferenciaProfesional === 'sin_preferencia' ? 'Sin preferencia' :
+                       formData.preferenciaProfesional === 'solo_mujeres' ? 'Solo clientes mujeres' :
+                       'Solo clientes hombres'}
+                    </p>
                   </div>
                 </div>
               )}

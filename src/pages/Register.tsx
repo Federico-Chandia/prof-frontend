@@ -17,6 +17,8 @@ const Register: React.FC = () => {
       ciudad: 'Buenos Aires',
       provincia: 'Buenos Aires',
     },
+    genero: 'prefiero_no_decir' as 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir',
+    preferenciaCliente: 'sin_preferencia' as 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -439,6 +441,57 @@ const Register: React.FC = () => {
                   <option value="Tierra del Fuego">Tierra del Fuego</option>
                 </select>
               </div>
+            </div>
+
+            {/* Preferencias de género (opcional) */}
+            <div className="border-t pt-4 space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                <p className="text-sm text-blue-800 font-medium mb-1">
+                  Preferencias de comodidad (opcional)
+                </p>
+                <p className="text-xs text-blue-700">
+                  {formData.rol === 'profesional' 
+                    ? 'Algunos clientes pueden tener preferencias de género por comodidad personal. Esto no afecta tu visibilidad ni oportunidades: si un cliente prefiere otro perfil, simplemente no te aparecerá esa solicitud específica, pero seguís visible para todos los demás.'
+                    : 'Sabemos que recibir a alguien en tu casa requiere confianza. Por eso, opcionalmente podés indicar si tenés preferencia sobre el género del profesional. Esto no afecta quién puede trabajar en nuestra plataforma, solo quién te aparece como opción disponible.'}
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="genero" className="block text-sm font-medium text-gray-700">
+                  Tu género (opcional)
+                </label>
+                <select
+                  id="genero"
+                  name="genero"
+                  value={formData.genero}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="prefiero_no_decir">Prefiero no decir</option>
+                  <option value="femenino">Femenino</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+
+              {formData.rol === 'profesional' && (
+                <div>
+                  <label htmlFor="preferenciaCliente" className="block text-sm font-medium text-gray-700">
+                    ¿Deseas indicar alguna preferencia sobre tus clientes? (opcional)
+                  </label>
+                  <select
+                    id="preferenciaCliente"
+                    name="preferenciaCliente"
+                    value={formData.preferenciaCliente}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="sin_preferencia">Sin preferencia</option>
+                    <option value="solo_mujeres">Solo acepto clientes mujeres</option>
+                    <option value="solo_hombres">Solo acepto clientes hombres</option>
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 

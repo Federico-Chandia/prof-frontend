@@ -22,6 +22,8 @@ export interface User {
     plan: 'basico' | 'premium' | 'profesional';
     renovacion?: string;
   };
+  genero?: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
+  preferenciaCliente?: 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres';
 }
 
 export interface RegisterData {
@@ -36,4 +38,6 @@ export interface RegisterData {
     ciudad: string;
     provincia: string;
   };
+  genero?: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
+  preferenciaCliente?: 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres';
 }
