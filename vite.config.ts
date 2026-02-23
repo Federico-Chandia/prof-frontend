@@ -24,12 +24,12 @@ export default defineConfig(({ mode }) => {
     port: 5173,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:5005',
+        target: env.VITE_API_URL || 'http://localhost:5003',
         changeOrigin: true,
         secure: false,
       },
       '/socket.io': {
-        target: process.env.VITE_SOCKET_URL || 'http://localhost:5003',
+        target: env.VITE_SOCKET_URL || 'http://localhost:5003',
         ws: true,
         changeOrigin: true,
       }
