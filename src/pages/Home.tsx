@@ -34,18 +34,18 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
               <div className="text-3xl mb-3">🗺️</div>
-              <h3 className="text-lg font-semibold mb-2">1. Elige tu zona</h3>
+              <h3 className="text-lg font-semibold mb-2">1️⃣ Describís tu problema en el buscador</h3>
               <p className="text-gray-600 text-sm sm:text-base">Selecciona dónde necesitas ayuda</p>
             </div>
             <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
               <div className="text-3xl mb-3">👷</div>
-              <h3 className="text-lg font-semibold mb-2">2. Elige profesional</h3>
+              <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís un profesional cercano</h3>
               <p className="text-gray-600 text-sm sm:text-base">Mira disponibilidad y reseñas</p>
             </div>
             <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
               <div className="text-3xl mb-3">💬</div>
-              <h3 className="text-lg font-semibold mb-2">3. Contacta</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Chat y WhatsApp directo</p>
+              <h3 className="text-lg font-semibold mb-2">3. Contacto directo y rápido</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Iniciá el chat y resolvé el problema sin trámites.</p>
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@ const Home: React.FC = () => {
         <div className="w-full mx-auto px-3 sm:px-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 sm:p-8 rounded-lg text-center">
             <h3 className="text-xl sm:text-2xl font-semibold mb-4">¿Sos profesional?</h3>
-            <p className="text-gray-700 mb-6 text-sm sm:text-base">Gana dinero resolviendo problemas de tu zona</p>
+            <p className="text-gray-700 mb-6 text-sm sm:text-base">Conseguí más clientes hoy</p>
             <Link to="/register" className="inline-block w-full sm:w-auto bg-blue-600 text-white px-8 py-3 sm:py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors">Registrarme como profesional</Link>
           </div>
 
@@ -87,18 +87,18 @@ const Home: React.FC = () => {
             <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-center">Planes disponibles</h3>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center border border-gray-200">
-                <div className="text-base sm:text-lg font-semibold">Gratis</div>
-                <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">2</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-2">tokens iniciales</div>
+                <div className="text-base sm:text-lg font-semibold">Básico</div>
+                <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">2 Tokens</div>
+                <div className="text-xs sm:text-sm text-gray-600 mt-2">Gratis al crear cuenta</div>
               </div>
               <div className="bg-white p-4 sm:p-6 rounded-lg text-center border-2 border-blue-600 shadow-md">
                 <div className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold mb-3">Popular</div>
-                <div className="text-base sm:text-lg font-semibold">Básico</div>
+                <div className="text-base sm:text-lg font-semibold">Profesional</div>
                 <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">20</div>
                 <div className="text-xs sm:text-sm text-gray-600 mt-2">tokens</div>
               </div>
               <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center border border-gray-200">
-                <div className="text-base sm:text-lg font-semibold">Pro</div>
+                <div className="text-base sm:text-lg font-semibold">Premium</div>
                 <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">50</div>
                 <div className="text-xs sm:text-sm text-gray-600 mt-2">máxima visibilidad</div>
               </div>

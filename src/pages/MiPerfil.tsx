@@ -672,8 +672,8 @@ const MiPerfil: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="sin_preferencia">Sin preferencia</option>
-                      <option value="solo_mujeres">Solo acepto clientes mujeres</option>
-                      <option value="solo_hombres">Solo acepto clientes hombres</option>
+                      <option value="solo_mujeres">Solo clientes mujeres</option>
+                      <option value="solo_hombres">Solo clientes hombres</option>
                     </select>
                   </div>
                 </div>

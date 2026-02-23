@@ -270,18 +270,18 @@ const MisTrabajos: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Mis Trabajos</h1>
               <p className="text-gray-600 mt-2">Gestiona tus reservas y revisa tu historial</p>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 flex-wrap">
               {/* Botón Comprar Suscripción */}
               {user?.planActual !== 'premium' && (
                 <Link
                   to="/suscripcion"
-                  className="px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 transition-all shadow-md"
+                  className="px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 transition-all shadow-md whitespace-nowrap"
                 >
                   ⭐ Upgrade Premium
                 </Link>
@@ -290,7 +290,7 @@ const MisTrabajos: React.FC = () => {
               {/* Toggle Vista */}
               <button
                 onClick={() => setShowCalendar(!showCalendar)}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
                   showCalendar 
                     ? 'bg-blue-600 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
