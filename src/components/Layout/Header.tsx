@@ -18,7 +18,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className="px-3 sm:px-4 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link 
@@ -26,8 +26,8 @@ const Header: React.FC = () => {
             className="flex flex-col"
             onClick={closeMenu}
           >
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Profesionales</h3> 
-            <p className="text-xs text-gray-600">Cerca tuyo, cuando los necesitás</p>
+            <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">Profesionales</h3> 
+            <p className="text-xs text-gray-600 hidden sm:block">Cerca tuyo, cuando los necesitás</p>
           </Link>
 
           {/* Desktop Navigation */}

@@ -129,8 +129,8 @@ const Oficios: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Buscar un profesional</h1>
+      <div className="w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-8">Buscar un profesional</h1>
         {qParam && (
           <div className="mb-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
             Resultados para: <strong>"{qParam}"</strong>
@@ -306,7 +306,7 @@ const Oficios: React.FC = () => {
             <div className="mb-4 text-sm text-gray-600">
               Mostrando <span className="font-semibold">{filteredResults.length}</span> resultado{filteredResults.length !== 1 ? 's' : ''}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredResults.map((oficio) => (
                 <ProfesionalCardUbicacion
                   key={oficio._id}

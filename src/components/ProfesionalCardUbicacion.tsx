@@ -12,64 +12,60 @@ const ProfesionalCardUbicacion: React.FC<ProfesionalCardUbicacionProps> = ({
   mostrarDistancia = false 
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-4">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="p-4 sm:p-6">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
               {profesional.usuario.nombre}
             </h3>
-            <p className="text-blue-600 font-medium">
+            <p className="text-blue-600 font-medium text-sm">
               {(profesional.tipoOficio || profesional.profesion)?.charAt(0).toUpperCase() + 
                (profesional.tipoOficio || profesional.profesion)?.slice(1)}
             </p>
           </div>
           {profesional.disponibilidad?.inmediata && (
-            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full whitespace-nowrap ml-2">
               Disponible
             </span>
           )}
         </div>
         
         {mostrarDistancia && profesional.distancia && (
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-500 text-sm">📍 {profesional.distancia.toFixed(1)} km{profesional.zonasTrabajo && profesional.zonasTrabajo[0] ? ` — ${profesional.zonasTrabajo[0]}` : ''}</span>
-              {profesional.fastResponder && (
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                  Responde rápido
-                </span>
-              )}
-              <span className="text-orange-600 text-sm font-medium">
-                +${profesional.cargoTraslado} traslado
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 text-xs sm:text-sm">
+            <span className="text-gray-600">📍 {profesional.distancia.toFixed(1)} km</span>
+            {profesional.fastResponder && (
+              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                Responde rápido
               </span>
-            </div>
+            )}
+            {profesional.cargoTraslado && profesional.cargoTraslado > 0 && (
+              <span className="text-orange-600 font-medium">+${profesional.cargoTraslado} traslado</span>
+            )}
           </div>
         )}
         
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">
           {profesional.descripcion}
         </p>
         
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3 sm:mb-4 flex-wrap gap-2">
           <div className="flex items-center">
             <span className="text-yellow-400">★</span>
-            <span className="text-sm text-gray-600 ml-1">
-              {profesional.rating?.toFixed(1) || '0.0'} ({profesional.totalReviews || 0} reseñas)
+            <span className="text-xs sm:text-sm text-gray-600 ml-1">
+              {profesional.rating?.toFixed(1) || '0.0'} ({profesional.totalReviews || 0})
             </span>
           </div>
           <div className="text-right">
-            <span className="text-lg font-semibold text-gray-900">
-              ${profesional.tarifas?.porHora || 0}/hora
+            <span className="text-base sm:text-lg font-semibold text-gray-900">
+              ${profesional.tarifas?.porHora || 0}
             </span>
-            {mostrarDistancia && profesional.cargoTraslado && profesional.cargoTraslado > 0 && (
-              <p className="text-xs text-gray-500">+ cargo traslado</p>
-            )}
+            <p className="text-xs text-gray-500">/hora</p>
           </div>
         </div>
         
         <div className="flex flex-wrap gap-1 mb-4">
-          {(profesional.zonasTrabajo || []).slice(0, 3).map((zona) => (
+          {(profesional.zonasTrabajo || []).slice(0, 2).map((zona) => (
             <span
               key={zona}
               className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
@@ -77,9 +73,9 @@ const ProfesionalCardUbicacion: React.FC<ProfesionalCardUbicacionProps> = ({
               {zona}
             </span>
           ))}
-          {(profesional.zonasTrabajo || []).length > 3 && (
+          {(profesional.zonasTrabajo || []).length > 2 && (
             <span className="text-xs text-gray-500">
-              +{profesional.zonasTrabajo.length - 3} más
+              +{profesional.zonasTrabajo.length - 2}
             </span>
           )}
         </div>
@@ -87,7 +83,7 @@ const ProfesionalCardUbicacion: React.FC<ProfesionalCardUbicacionProps> = ({
         <Link
           to={`/oficios/${profesional._id}${window.location.search}`}
           onClick={() => import('../services/analytics').then(({ sendEvent }) => sendEvent('contactStarted', { profesionalId: profesional._id, tipo: profesional.tipoOficio }))}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center block"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors text-center block font-medium text-sm touch-manipulation"
         >
           💬 Contactar
         </Link>

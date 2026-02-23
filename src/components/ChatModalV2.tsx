@@ -254,19 +254,19 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
   }, [messages, previewImage]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-md h-96 flex flex-col shadow-lg">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg w-full max-w-md h-[calc(100vh-100px)] sm:h-96 flex flex-col shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-500 to-blue-600">
-          <div className="text-white">
-            <h3 className="font-semibold">{otherUser.name}</h3>
-            <p className="text-sm text-blue-100">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-gradient-to-r from-blue-500 to-blue-600">
+          <div className="text-white min-w-0">
+            <h3 className="font-semibold text-sm sm:text-base truncate">{otherUser.name}</h3>
+            <p className="text-xs sm:text-sm text-blue-100">
               {connected ? '🟢 Conectado' : '🔴 Desconectado'}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:bg-white hover:bg-opacity-20 w-8 h-8 flex items-center justify-center rounded"
+            className="text-white hover:bg-white hover:bg-opacity-20 w-8 h-8 flex items-center justify-center rounded flex-shrink-0 ml-2"
           >
             ✕
           </button>
