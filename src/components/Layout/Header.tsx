@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link 
-            to={user?.rol === 'profesional' ? '/mis-trabajos' : user?.rol === 'cliente' ? '/oficios' : '/'} 
+            to={user?.rol === 'cliente' ? '/' : user?.rol === 'profesional' ? '/mis-trabajos' : '/'} 
             className="flex flex-col"
             onClick={closeMenu}
           >

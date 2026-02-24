@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import CATEGORIAS from '../data/categorias';
 import { detectCategoriaFromText } from '../services/intentService';
 import SearchHero from '../components/SearchHero';
+import TokenExplanation from '../components/TokenExplanation';
 
 
 const Home: React.FC = () => {
@@ -81,29 +82,13 @@ const Home: React.FC = () => {
             <p className="text-gray-700 mb-6 text-sm sm:text-base">Conseguí más clientes hoy</p>
             <Link to="/register" className="inline-block w-full sm:w-auto bg-blue-600 text-white px-8 py-3 sm:py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors">Registrarme como profesional</Link>
           </div>
+        </div>
+      </div>
 
-          {/* Token Plans */}
-          <div className="mt-8 sm:mt-12">
-            <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-center">Planes disponibles</h3>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center border border-gray-200">
-                <div className="text-base sm:text-lg font-semibold">Básico</div>
-                <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">2 Tokens</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-2">Gratis al crear cuenta</div>
-              </div>
-              <div className="bg-white p-4 sm:p-6 rounded-lg text-center border-2 border-blue-600 shadow-md">
-                <div className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold mb-3">Popular</div>
-                <div className="text-base sm:text-lg font-semibold">Profesional</div>
-                <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">20</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-2">tokens</div>
-              </div>
-              <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center border border-gray-200">
-                <div className="text-base sm:text-lg font-semibold">Premium</div>
-                <div className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">50</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-2">máxima visibilidad</div>
-              </div>
-            </div>
-          </div>
+      {/* Token Explanation */}
+      <div className="bg-gray-50 py-8 sm:py-12">
+        <div className="w-full mx-auto px-3 sm:px-4">
+          <TokenExplanation compact={true} />
         </div>
       </div>
     </div>

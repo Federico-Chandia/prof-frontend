@@ -67,7 +67,7 @@ const DetalleOficio: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-start gap-6 mb-6">
-            <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               {oficio.usuario.avatar ? (
                 <img src={oficio.usuario.avatar} alt={oficio.usuario.nombre} className="w-full h-full object-cover" />
               ) : (
@@ -77,7 +77,7 @@ const DetalleOficio: React.FC = () => {
               )}
             </div>
             
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{oficio.usuario.nombre}</h1>
               <p className="text-xl text-blue-600 capitalize mb-2">{oficio.tipoOficio}</p>
               <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -87,15 +87,13 @@ const DetalleOficio: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-right">
-              <div className="flex flex-col items-end gap-2 mt-4">
-                <button
-                  onClick={handleReservarClick}
-                  className="w-full bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
-                >
-                  {user ? 'Reservar Servicio' : 'Iniciar Sesión para Contactar'}
-                </button>
-              </div>
+            <div className="flex-shrink-0">
+              <button
+                onClick={handleReservarClick}
+                className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 whitespace-nowrap"
+              >
+                {user ? 'Reservar Servicio' : 'Iniciar Sesión para Contactar'}
+              </button>
             </div>
           </div>
           

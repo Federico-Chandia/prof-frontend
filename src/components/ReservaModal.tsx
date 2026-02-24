@@ -145,25 +145,6 @@ const ReservaModal: React.FC<ReservaModalProps> = ({ oficio, isOpen, onClose, on
             />
           </div>
 
-          {/* Preferencia de género del profesional */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Preferencia de profesional (opcional)</label>
-            <p className="text-xs text-gray-500 mb-2">
-              Para tu comodidad, podés indicar una preferencia
-            </p>
-            <select
-              value={formData.preferenciaProfesional}
-              onChange={(e) => {
-                const newValue = e.target.value as 'sin_preferencia' | 'prefiero_mujer' | 'prefiero_hombre';
-                setFormData(prev => ({...prev, preferenciaProfesional: newValue}));
-              }}
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="sin_preferencia">Sin preferencia</option>
-              <option value="prefiero_mujer">Prefiero profesional mujer</option>
-              <option value="prefiero_hombre">Prefiero profesional hombre</option>
-            </select>
-          </div>
               <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-sm">
             💬 La fecha y hora se coordinarán mediante chat con el profesional
           </div> <br />

@@ -28,7 +28,8 @@ const PricingBanner: React.FC<PricingBannerProps> = ({ onUpgrade }) => {
     {
       id: 'profesional',
       name: 'Profesional',
-      price: '$24.999/mes',
+      price: '$5.000/mes',
+      originalPrice: '$24.999/mes',
       tokens: '20 tokens/mes',
       features: [
         'Todo lo del plan Básico',
@@ -44,7 +45,8 @@ const PricingBanner: React.FC<PricingBannerProps> = ({ onUpgrade }) => {
     {
       id: 'premium',
       name: 'Premium',
-      price: '$49.999/mes',
+      price: '$10.000/mes',
+      originalPrice: '$49.999/mes',
       tokens: 'Tokens ilimitados',
       features: [
         'Todo lo del plan Profesional',
@@ -103,7 +105,15 @@ const PricingBanner: React.FC<PricingBannerProps> = ({ onUpgrade }) => {
 
             <div className="text-center mb-4">
               <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{plan.price}</p>
+              <div className="mt-2">
+                {plan.originalPrice && (
+                  <p className="text-sm text-gray-500 line-through">{plan.originalPrice}</p>
+                )}
+                <p className="text-2xl font-bold text-gray-900">{plan.price}</p>
+                {plan.originalPrice && (
+                  <p className="text-xs text-red-600 font-semibold">Por tiempo limitado</p>
+                )}
+              </div>
               <p className="text-sm text-gray-600 mt-1">{plan.tokens}</p>
             </div>
 

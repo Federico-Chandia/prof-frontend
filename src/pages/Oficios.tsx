@@ -156,7 +156,7 @@ const Oficios: React.FC = () => {
         {/* Buscador por texto */}
         <div className="mb-6">
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <input
                   type="text"
@@ -171,7 +171,7 @@ const Oficios: React.FC = () => {
               </div>
               <button
                 onClick={() => setMostrarFiltros(!mostrarFiltros)}
-                className={`px-6 py-3 rounded-md font-medium transition-colors flex items-center gap-2 ${
+                className={`px-6 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap ${
                   mostrarFiltros
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -252,7 +252,7 @@ const Oficios: React.FC = () => {
                     name="disponible"
                     checked={filters.disponible}
                     onChange={handleFilterChange}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4"
                   />
                   <span className="text-sm text-gray-700">Disponible ahora</span>
                 </label>

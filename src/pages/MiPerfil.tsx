@@ -507,14 +507,14 @@ const MiPerfil: React.FC = () => {
           />
         )}
 
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Mi Perfil Profesional</h1>
             <p className="text-gray-600 mt-2">Gestiona tu información y portfolio</p>
           </div>
           <button
             onClick={() => setEditMode(!editMode)}
-            className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 whitespace-nowrap"
           >
             {editMode ? 'Cancelar' : 'Editar Perfil'}
           </button>
@@ -750,7 +750,7 @@ const MiPerfil: React.FC = () => {
                       type="checkbox"
                       checked={formData.seguroResponsabilidad}
                       onChange={(e) => setFormData({...formData, seguroResponsabilidad: e.target.checked})}
-                      className="mr-2"
+                      className="mr-2 h-4 w-4"
                     />
                     <label className="text-sm text-gray-700">
                       Tengo seguro de responsabilidad civil
@@ -816,7 +816,7 @@ const MiPerfil: React.FC = () => {
                                 [dia]: { ...horario, activo: e.target.checked }
                               }
                             })}
-                            className="mr-2"
+                            className="mr-2 h-4 w-4"
                           />
                           <span className="text-sm font-medium capitalize">{dia}</span>
                         </label>

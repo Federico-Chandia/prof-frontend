@@ -121,16 +121,6 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                   Obtén tokens recurrentes con planes de suscripción mensual a precios especiales.
                 </p>
               </div>
-
-              <div className="bg-purple-50 rounded-lg p-6 border border-purple-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <Gift className="text-purple-600" size={24} />
-                  <h3 className="font-bold text-gray-900">Bonificaciones</h3>
-                </div>
-                <p className="text-gray-700">
-                  Recibe bonos por completar trabajos y mantener buenas calificaciones.
-                </p>
-              </div>
             </div>
 
             {/* Info importante */}
@@ -141,8 +131,8 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
               <ul className="space-y-2 text-sm text-blue-800">
                 <li>• Los tokens NO son dinero real ni se pueden convertir a efectivo</li>
                 <li>• Solo se gastan cuando confirmas que respondes a una solicitud</li>
-                <li>• Los tokens no utilizados se mantienen en tu cuenta</li>
-                <li>• La plataforma nunca expira tus tokens (salvo política especial)</li>
+                <li>• Los tokens no son acumulativos</li>
+                <li>• La plataforma Renueva tus tokens mensualmente de acuerdo a tu plan</li>
               </ul>
             </div>
           </div>
@@ -158,17 +148,6 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                   <h3 className="font-bold text-lg text-gray-900">Básico</h3>
                   <p className="text-sm text-gray-600">Prueba la plataforma</p>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div className="text-center mb-4">
-                    <p className="text-sm text-gray-600">Por transacción</p>
-                    <p className="text-3xl font-bold text-gray-900">Según necesidad</p>
-                  </div>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li>✓ Compra tokens cuando los necesites</li>
-                    <li>✓ Sin suscripción requerida</li>
-                    <li>✓ Precio por unidad estándar</li>
-                  </ul>
                 </div>
               </div>
 
@@ -188,11 +167,9 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                       <p className="text-3xl font-bold text-amber-600">20</p>
                       <p className="text-gray-600">tokens</p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">+ bonificaciones mensuales</p>
                   </div>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li>✓ 20 tokens cada mes</li>
-                    <li>✓ 2 tokens de bono extra</li>
                     <li>✓ Renovación automática</li>
                     <li>✓ Mejor para profesionales activos</li>
                   </ul>
@@ -215,11 +192,9 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                       <p className="text-3xl font-bold text-purple-600">50</p>
                       <p className="text-gray-600">tokens</p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">+ bonificaciones extra</p>
                   </div>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li>✓ 50 tokens cada mes</li>
-                    <li>✓ 10 tokens de bono extra</li>
                     <li>✓ Prioridad en búsquedas</li>
                     <li>✓ Para profesionales con alto volumen</li>
                   </ul>
@@ -305,7 +280,7 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                     ¿Qué pasa si no contacto al cliente después de responder?
                   </summary>
                   <p className="mt-3 text-gray-700 text-sm">
-                    Los tokens se gastan cuando confirmas tu respuesta, sin importar si luego contactas al cliente. Por eso es importante responder solo a solicitudes que realmente puedas atender.
+                    Los tokens se gastan cuando confirmas tu respuesta. Por eso es importante responder solo a solicitudes que realmente puedas atender.
                   </p>
                 </details>
 
@@ -323,7 +298,7 @@ const TokenExplanation: React.FC<TokenExplanationProps> = ({
                     ¿Hay descuentos para volumen?
                   </summary>
                   <p className="mt-3 text-gray-700 text-sm">
-                    Sí, con los planes de suscripción obtienes mejor precio por token. Además, completar trabajos exitosamente te da bonificaciones.
+                    Sí, con los planes de suscripción obtienes mejor precio por token.
                   </p>
                 </details>
               </div>

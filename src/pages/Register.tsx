@@ -300,7 +300,7 @@ const Register: React.FC = () => {
                 </button>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                La contraseña debe contener al menos una mayúscula, una minúscula y un número
+                La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula y un número
               </p>
             </div>
 
