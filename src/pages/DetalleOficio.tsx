@@ -66,7 +66,7 @@ const DetalleOficio: React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-start gap-6 mb-6">
             <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               {oficio.usuario.avatar ? (
                 <img src={oficio.usuario.avatar} alt={oficio.usuario.nombre} className="w-full h-full object-cover" />
@@ -80,14 +80,14 @@ const DetalleOficio: React.FC = () => {
             <div className="flex-1 min-w-0">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{oficio.usuario.nombre}</h1>
               <p className="text-xl text-blue-600 capitalize mb-2">{oficio.tipoOficio}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                 <span>⭐ {oficio.rating} ({oficio.totalReviews} reseñas)</span>
                 <span>🔧 {oficio.trabajosCompletados} trabajos completados</span>
                 <span>📅 {oficio.experiencia} años de experiencia</span>
               </div>
             </div>
             
-            <div className="flex-shrink-0">
+            <div className="w-full sm:w-auto sm:flex-shrink-0">
               <button
                 onClick={handleReservarClick}
                 className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 whitespace-nowrap"
