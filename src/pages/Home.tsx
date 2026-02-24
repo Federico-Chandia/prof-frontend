@@ -93,7 +93,7 @@ const Home: React.FC = () => {
                 <span className="text-3xl">⚡</span>
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Tokens</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Tokens de Profesional</h2>
                 <p className="text-amber-600 text-sm">La moneda de la plataforma</p>
               </div>
             </div>
