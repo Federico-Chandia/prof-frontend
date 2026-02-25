@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Shield, Users, Trash2, Ban, CheckCircle, Search } from 'lucide-react';
+import { User, Shield, Users, Trash2, Ban, CheckCircle, Search, Key, CreditCard } from 'lucide-react';
 import api from '../services/api';
 
 interface UserData {
@@ -31,7 +31,8 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRole, setFilterRole] = useState('');
-  //const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [resetPasswordModal, setResetPasswordModal] = useState<{ userId: string; userName: string } | null>(null);
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -87,6 +88,45 @@ const AdminDashboard: React.FC = () => {
     } catch (error: any) {
       alert(error.response?.data?.message || 'Error al cambiar rol');
     }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetPasswordModal || !newPassword) return;
+
+    if (newPassword.length < 8) {
+      alert('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    try {
+      await api.patch(`/admin/users/${resetPasswordModal.userId}/reset-password`, { 
+        newPassword 
+      });
+      alert('Contraseña restablecida correctamente');
+      setResetPasswordModal(null);
+      setNewPassword('');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error al resetear contraseña');
+    }
+  };
+
+  const getPlanBadge = (user: UserData) => {
+    if (user.rol !== 'profesional') return null;
+    
+    const plan = user.tokens?.plan || 'free';
+    const colors = {
+      free: 'bg-gray-100 text-gray-800',
+      basico: 'bg-blue-100 text-blue-800',
+      profesional: 'bg-purple-100 text-purple-800',
+      premium: 'bg-yellow-100 text-yellow-800'
+    };
+
+    return (
+      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${colors[plan as keyof typeof colors] || colors.free}`}>
+        <CreditCard className="h-3 w-3" />
+        {plan.charAt(0).toUpperCase() + plan.slice(1)}
+      </span>
+    );
   };
 
   const searchUsers = async () => {
@@ -224,7 +264,7 @@ const AdminDashboard: React.FC = () => {
                     Usuario
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Rol
+                    Rol / Plan
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
@@ -247,15 +287,18 @@ const AdminDashboard: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <select
-                        value={user.rol}
-                        onChange={(e) => handleChangeRole(user._id, e.target.value)}
-                        className="text-sm border border-gray-300 rounded px-2 py-1"
-                        disabled={user.rol === 'admin'}
-                      >
-                        <option value="cliente">Cliente</option>
-                        <option value="profesional">Profesional</option>
-                      </select>
+                      <div className="space-y-1">
+                        <select
+                          value={user.rol}
+                          onChange={(e) => handleChangeRole(user._id, e.target.value)}
+                          className="text-sm border border-gray-300 rounded px-2 py-1 w-full"
+                          disabled={user.rol === 'admin'}
+                        >
+                          <option value="cliente">Cliente</option>
+                          <option value="profesional">Profesional</option>
+                        </select>
+                        {getPlanBadge(user)}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -271,6 +314,14 @@ const AdminDashboard: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
+                        <button
+                          onClick={() => setResetPasswordModal({ userId: user._id, userName: user.nombre })}
+                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                          disabled={user.rol === 'admin'}
+                          title="Resetear contraseña"
+                        >
+                          <Key className="h-4 w-4" />
+                        </button>
                         <button
                           onClick={() => handleToggleStatus(user._id)}
                           className={`p-2 rounded-lg transition-colors ${
@@ -299,6 +350,51 @@ const AdminDashboard: React.FC = () => {
             </table>
           </div>
         </div>
+
+        {/* Modal para resetear contraseña */}
+        {resetPasswordModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Resetear Contraseña
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Usuario: <span className="font-medium">{resetPasswordModal.userName}</span>
+              </p>
+              <div className="mb-4">
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Nueva Contraseña
+                </label>
+                <input
+                  id="newPassword"
+                  type="text"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Mínimo 8 caracteres"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleResetPassword}
+                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Resetear
+                </button>
+                <button
+                  onClick={() => {
+                    setResetPasswordModal(null);
+                    setNewPassword('');
+                  }}
+                  className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
