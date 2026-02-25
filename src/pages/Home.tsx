@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import CATEGORIAS from '../data/categorias';
 import { detectCategoriaFromText } from '../services/intentService';
 import SearchHero from '../components/SearchHero';
+import Testimonios from '../components/Testimonios';
 
 
 const Home: React.FC = () => {
@@ -32,20 +33,47 @@ const Home: React.FC = () => {
         <div className="w-full mx-auto px-3 sm:px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">¿Cómo funciona?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <div className="text-3xl mb-3">🗺️</div>
-              <h3 className="text-lg font-semibold mb-2">1️⃣ Describís tu problema en el buscador</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Selecciona dónde necesitas ayuda</p>
+            <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80"
+                  alt="Buscar profesional"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4 sm:p-6">
+                <div className="text-3xl mb-3">🗺️</div>
+                <h3 className="text-lg font-semibold mb-2">1️⃣ Describís tu problema</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Cuéntanos qué necesitás</p>
+              </div>
             </div>
-            <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <div className="text-3xl mb-3">👷</div>
-              <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís un profesional cercano</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Mira disponibilidad y reseñas</p>
+            <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop&q=80"
+                  alt="Elegir profesional"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4 sm:p-6">
+                <div className="text-3xl mb-3">👷</div>
+                <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís profesional</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Mira reseñas y disponibilidad</p>
+              </div>
             </div>
-            <div className="text-left sm:text-center bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <div className="text-3xl mb-3">💬</div>
-              <h3 className="text-lg font-semibold mb-2">3. Contacto directo y rápido</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Iniciá el chat y resolvé el problema sin trámites.</p>
+            <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80"
+                  alt="Chat directo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4 sm:p-6">
+                <div className="text-3xl mb-3">💬</div>
+                <h3 className="text-lg font-semibold mb-2">3. Contacto directo</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Resuelve sin intermediarios</p>
+              </div>
             </div>
           </div>
         </div>
@@ -208,6 +236,118 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sección de Testimonios */}
+      <Testimonios />
+
+      {/* Sección de Precios Mejorada */}
+      <section id="planes" className="py-8 sm:py-16 bg-gray-50">
+        <div className="w-full mx-auto px-3 sm:px-4 max-w-6xl">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+              Planes y Precios
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600">
+              Elige el plan que mejor se adapte a tus necesidades de profesional
+            </p>
+          </div>
+
+          {/* Cards de planes con imágenes */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Plan Gratis */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-32 sm:h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <span className="text-4xl sm:text-5xl">🆓</span>
+              </div>
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Gratis</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-4">2 Tokens</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Incluye:</p>
+                <ul className="space-y-2 mb-6 text-xs sm:text-sm text-gray-700">
+                  <li>✓ Perfil profesional básico</li>
+                  <li>✓ 2 tokens al registrarte</li>
+                  <li>✓ Soporte por email</li>
+                  <li>✓ Chat con clientes</li>
+                </ul>
+                <button className="w-full py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  Empezar
+                </button>
+              </div>
+            </div>
+
+            {/* Plan Básico */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow ring-2 ring-blue-500 relative">
+              <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                Más Popular
+              </div>
+              <div className="h-32 sm:h-40 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <span className="text-4xl sm:text-5xl">⚡</span>
+              </div>
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Básico</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">20 Tokens</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Por única vez</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Incluye:</p>
+                <ul className="space-y-2 mb-6 text-xs sm:text-sm text-gray-700">
+                  <li>✓ Todo lo del Plan Gratis</li>
+                  <li>✓ 20 tokens para usar</li>
+                  <li>✓ Perfil destacado</li>
+                  <li>✓ Soporte prioritario</li>
+                </ul>
+                <button className="w-full py-2 sm:py-3 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Comprar Ahora
+                </button>
+              </div>
+            </div>
+
+            {/* Plan Pro */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-32 sm:h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                <span className="text-4xl sm:text-5xl">👑</span>
+              </div>
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Pro</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">50 Tokens</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Por única vez</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Incluye:</p>
+                <ul className="space-y-2 mb-6 text-xs sm:text-sm text-gray-700">
+                  <li>✓ Todo lo del Plan Básico</li>
+                  <li>✓ 50 tokens para usar</li>
+                  <li>✓ Inscripción en trending</li>
+                  <li>✓ Soporte 24/7</li>
+                </ul>
+                <button className="w-full py-2 text-sm font-medium border border-amber-600 text-amber-600 rounded-lg hover:bg-amber-50 transition-colors">
+                  Comprar Ahora
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Suscripción */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 sm:p-8 text-white text-center">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2">Suscripción Profesional</h3>
+            <p className="text-sm sm:text-base text-blue-100 mb-4">
+              Obtén tokens recurrentes cada mes con planes de suscripción
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
+              <div className="bg-blue-500 rounded-lg p-4">
+                <p className="text-lg font-bold">$5,000/mes</p>
+                <p className="text-xs text-blue-100">100 tokens mensuales</p>
+              </div>
+              <div className="bg-blue-500 rounded-lg p-4">
+                <p className="text-lg font-bold">$10,000/mes</p>
+                <p className="text-xs text-blue-100">300 tokens mensuales</p>
+              </div>
+            </div>
+            <Link
+              to="/register"
+              className="inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              Ver Planes de Suscripción
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

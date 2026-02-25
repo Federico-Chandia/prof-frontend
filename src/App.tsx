@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
 import ToastContainer from './components/ToastContainer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -147,6 +148,7 @@ function App() {
             </main>
           </div>
           </Router>
+          <Footer />
         </NotificationProvider>
       </AuthProvider>
     </ErrorBoundary>
