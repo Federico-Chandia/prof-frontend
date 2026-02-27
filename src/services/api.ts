@@ -5,18 +5,13 @@ import { getCsrfToken } from './csrf';
 const getApiUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_URL;
   
-  // En producción, usar la variable de entorno o URL por defecto
-  if (envUrl) {
+  // En producción, usar la variable de entorno
+  if (envUrl && !import.meta.env.DEV) {
     return envUrl;
   }
   
-  // En desarrollo, usar localhost
-  if (import.meta.env.DEV) {
-    return 'http://localhost:5003/api';
-  }
-  
-  // Fallback para producción
-  return '/api';
+  // En desarrollo, usar ruta relativa para que funcione el proxy de Vite
+  return '';
 };
 
 const API_URL = getApiUrl();

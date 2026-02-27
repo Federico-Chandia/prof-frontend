@@ -22,11 +22,20 @@ export default defineConfig(({ mode }) => {
 
   server: {
     port: 5173,
+    hmr: {
+      overlay: true,
+    },
     proxy: {
       '/api': {
         target: env.VITE_API_URL || 'http://localhost:5003',
         changeOrigin: true,
         secure: false,
+      },
+      '/auth': {
+        target: env.VITE_API_URL || 'http://localhost:5003',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/auth/, '/api/auth'),
       },
       '/socket.io': {
         target: env.VITE_SOCKET_URL || 'http://localhost:5003',

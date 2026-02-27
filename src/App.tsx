@@ -8,6 +8,7 @@ import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import ToastContainer from './components/ToastContainer';
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -67,6 +68,7 @@ function App() {
       <AuthProvider>
         <NotificationProvider>
           <Router>
+          <ScrollToTop />
           <div className="min-h-screen bg-gray-50">
             <Header />
             <ToastContainer />
@@ -146,9 +148,9 @@ function App() {
               />
               </Routes>
             </main>
+            <Footer />
           </div>
           </Router>
-          <Footer />
         </NotificationProvider>
       </AuthProvider>
     </ErrorBoundary>

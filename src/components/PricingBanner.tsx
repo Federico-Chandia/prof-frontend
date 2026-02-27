@@ -47,12 +47,11 @@ const PricingBanner: React.FC<PricingBannerProps> = ({ onUpgrade }) => {
       name: 'Premium',
       price: '$10.000/mes',
       originalPrice: '$49.999/mes',
-      tokens: 'Tokens ilimitados',
+      tokens: '50 tokens/mes',
       features: [
         'Todo lo del plan Profesional',
-        'Contactos ilimitados',
+        '50 contactos mensuales',
         'Verificación profesional',
-        'Badge de confianza',
         'Aparición destacada',
         'Soporte 24/7'
       ],

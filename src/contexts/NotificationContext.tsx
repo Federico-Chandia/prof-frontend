@@ -39,12 +39,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Conectar Socket.IO para recibir notificaciones en tiempo real
   useEffect(() => {
-    // Determinar URL de Socket según el ambiente
+    // En desarrollo, usar ruta relativa para que funcione el proxy de Vite
     const getSocketUrl = (): string => {
+      if (import.meta.env.DEV) return window.location.origin;
       const envUrl = import.meta.env.VITE_SOCKET_URL;
       if (envUrl) return envUrl;
-      if (import.meta.env.DEV) return 'http://localhost:5003';
-      return window.location.origin; // En producción, usar el mismo origen
+      return window.location.origin;
     };
 
     const socketUrl = getSocketUrl();

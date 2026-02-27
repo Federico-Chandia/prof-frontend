@@ -17,10 +17,10 @@ const Testimonios: React.FC = () => {
       id: 1,
       autor: 'María Rodríguez',
       rol: 'Cliente',
-      ciudad: 'CABA',
+      ciudad: 'Villa Urquiza',
       rating: 5,
       texto:
-        'No tenia idea de a quién llamar cuando se me quemó el interruptor. Entré a la app, encontré un electricista en 10 minutos y listo. El chabon vino al toque y arregló todo. Muy recomendable .',
+        'No tenia idea de a quién llamar cuando se derritio el enchufe del calefón. Busque por acá, encontré una electricista en 5 minutos y listo. Vino y arregló todo. Muy recomendable.',
       imagen:
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&q=80',
     },
@@ -31,55 +31,22 @@ const Testimonios: React.FC = () => {
       ciudad: 'La Plata',
       rating: 5,
       texto:
-        'Laburo hace 20 años y con esta pagina se me hace más facil conseguir clientes',
+        'Laburo hace años y con esta pagina es más facil conseguir nuevos clientes',
       imagen:
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&q=80',
     },
     {
       id: 3,
-      autor: 'Lucía Martínez',
-      rol: 'Cliente',
-      ciudad: 'Zona Norte',
-      rating: 5,
-      texto:
-        'Se me rompío el termotanque, contacté al electricista y en media hora lo arregló. Impecable.',
-      imagen:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&q=80',
-    },
-    {
-      id: 4,
-      autor: 'Pedro Fernández',
+      autor: 'Juana Fernández',
       rol: 'profesional',
       ciudad: 'Berazategui',
       rating: 5,
       texto:
-        'Me registré pensando que era al pedo, pero es como tener mi propio negocio pero sin quilombo. Genial.',
+        'La recomiendo, te facilita mucho las cosas y a generar confianza con nuevos clientes. Genial ',
       imagen:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&q=80',
-    },
-    {
-      id: 5,
-      autor: 'Sofía López',
-      rol: 'Cliente',
-      ciudad: 'San Isidro',
-      rating: 5,
-      texto:
-        'Contrataba gente recomendada y no me convencia mucho. Ahora con la app veo rating, fotos de trabajos anteriores, y puedo chatear antes. Me ahorro un montón de viajes y tiempo. Una de las mejores apps que tengo instalada.',
-      imagen:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&q=80',
-    },
-    {
-      id: 6,
-      autor: 'Roberto Ruiz',
-      rol: 'Cliente',
-      ciudad: 'Quilmes',
-      rating: 5,
-      texto:
-        'Soy usuario desde el primer día que salió la app. Ahora toda mi cuadra pregunta por Profesionales cuando hay algo que arreglar. Es seguro, los profesionales son de verdad y responden al toque. Eso del chat en vivo es lo mejor que existe.',
-      imagen:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&q=80',
-    },
-  ];
+        'https://imgs.search.brave.com/qDWluaY6-B4-bQzGaSMd9hn3LdZXou9TGGT34ffalLs/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4w/LnVuY29tby5jb20v/ZXMvcG9zdHMvMi84/LzgvY29tb19kZXRl/Y3Rhcl91bl9jb3J0/b2NpcmN1aXRvX2Vu/X2Nhc2FfNDU4ODJf/NjAwLmpwZw',
+      } 
+  ]
 
   return (
     <section id="testimonios" className="py-8 sm:py-16 bg-white">

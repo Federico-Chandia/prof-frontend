@@ -66,11 +66,15 @@ const MisTrabajos: React.FC = () => {
   const fetchReservas = async () => {
     try {
       const response = await api.get('/reservas?tipo=profesional');
-      const reservas = response.data || [];
+      const reservasData = response.data;
+      
+      // Validar que sea un array
+      const reservas = Array.isArray(reservasData) ? reservasData : [];
 
       setReservas(reservas);
     } catch (error) {
       console.error('Error fetching reservas:', error);
+      setReservas([]);
     } finally {
       setLoading(false);
     }

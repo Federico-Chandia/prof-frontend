@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div id="problem-input" className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-blue-600 text-white">
         <div className="w-full mx-auto px-3 sm:px-4 py-8 sm:py-12 md:py-16">
@@ -19,7 +19,7 @@ const Home: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
              ¿Se te cortó la luz o salta la térmica? 
             </h1>
-            <p className="text-base sm:text-lg mb-6 sm:mb-8">
+            <p  className="text-base sm:text-lg mb-6 sm:mb-8">
              Encontrá un electricista cerca tuyo en minutos.
             </p>
 
@@ -29,14 +29,14 @@ const Home: React.FC = () => {
       </div>
 
 
-       <div className="py-8 sm:py-12 bg-gray-50">
+       <div id="como-funciona" className="py-8 sm:py-12 bg-gray-50">
         <div className="w-full mx-auto px-3 sm:px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">¿Cómo funciona?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80"
+                  src="https://imgs.search.brave.com/RNUKliIZNpotOTq4SDxMKtZ7U8OKmACPOqdxCZ1rtIY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMjA3/ODg2MTc4NC9lcy9m/b3RvL2NhYmxlYWRv/LWRlZmVjdHVvc28t/Y2FyYm9uaXphZG8t/eS1xdWVtYWRvLWNv/bmNlcHRvLWRlLXBl/bGlncm8tZGUtaW5j/ZW5kaW8tcG9yLWNv/cnRvY2lyY3VpdG8u/anBnP2I9MSZzPTYx/Mng2MTImdz0wJms9/MjAmYz1BNU4zUkhS/aHpXdEZMcVlXVnJT/N29fQzdkdGVQNFpH/bXVFX1RLcnY3NGFB/PQ"
                   alt="Buscar profesional"
                   className="w-full h-full object-cover"
                 />
@@ -44,35 +44,35 @@ const Home: React.FC = () => {
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">🗺️</div>
                 <h3 className="text-lg font-semibold mb-2">1️⃣ Describís tu problema</h3>
-                <p className="text-gray-600 text-sm sm:text-base">Cuéntanos qué necesitás</p>
+                <p className="text-gray-600 text-sm sm:text-base">Selecciona dónde necesitas ayuda</p>
               </div>
             </div>
             <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop&q=80"
+                  src="https://plus.unsplash.com/premium_photo-1661911309991-cc81afcce97d?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Elegir profesional"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">👷</div>
-                <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís profesional</h3>
+                <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís un profesional cercano</h3>
                 <p className="text-gray-600 text-sm sm:text-base">Mira reseñas y disponibilidad</p>
               </div>
             </div>
             <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1564544430321-8d0eb062b11e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHB1bGdhcmVzJTIwaGFjaWElMjBhcnJpYmF8ZW58MHx8MHx8fDA%3D"
                   alt="Chat directo"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">💬</div>
-                <h3 className="text-lg font-semibold mb-2">3. Contacto directo</h3>
-                <p className="text-gray-600 text-sm sm:text-base">Resuelve sin intermediarios</p>
+                <h3 className="text-lg font-semibold mb-2">3. Contacto directo y rápido</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Iniciá el chat y resolvé el problema sin trámites.</p>
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ const Home: React.FC = () => {
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1 text-sm">Confirma tu respuesta</h4>
                   <p className="text-gray-700 text-xs">
-                    Si decides responder, se gastan los tokens.
+                    Si decides responder, se usa un token.
                   </p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ const Home: React.FC = () => {
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1 text-sm">Completa el trabajo</h4>
                   <p className="text-gray-700 text-xs">
-                    Realiza el trabajo acordado y gana dinero.
+                    Realiza el trabajo acordado y recibí tu pago y una reseña.
                   </p>
                 </div>
               </div>
@@ -284,14 +284,14 @@ const Home: React.FC = () => {
                 <span className="text-4xl sm:text-5xl">⚡</span>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Básico</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Profesional</h3>
                 <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">20 Tokens</p>
-                <p className="text-xs sm:text-sm text-gray-600 mb-4">Por única vez</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Renovacion Mensual</p>
                 <p className="text-xs sm:text-sm text-gray-600 mb-4">Incluye:</p>
                 <ul className="space-y-2 mb-6 text-xs sm:text-sm text-gray-700">
-                  <li>✓ Todo lo del Plan Gratis</li>
+                  <li>✓ Todo lo del Plan Básico</li>
                   <li>✓ 20 tokens para usar</li>
-                  <li>✓ Perfil destacado</li>
+                  <li>✓ Perfil verificado</li>
                   <li>✓ Soporte prioritario</li>
                 </ul>
                 <button className="w-full py-2 sm:py-3 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -306,14 +306,15 @@ const Home: React.FC = () => {
                 <span className="text-4xl sm:text-5xl">👑</span>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Pro</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Plan Premium</h3>
                 <p className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">50 Tokens</p>
-                <p className="text-xs sm:text-sm text-gray-600 mb-4">Por única vez</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4">Renovacion Mensual</p>
                 <p className="text-xs sm:text-sm text-gray-600 mb-4">Incluye:</p>
                 <ul className="space-y-2 mb-6 text-xs sm:text-sm text-gray-700">
                   <li>✓ Todo lo del Plan Básico</li>
                   <li>✓ 50 tokens para usar</li>
-                  <li>✓ Inscripción en trending</li>
+                  <li>✓ Perfil verificado</li>
+                  <li>✓ estadisticas avanzadas</li>
                   <li>✓ Soporte 24/7</li>
                 </ul>
                 <button className="w-full py-2 text-sm font-medium border border-amber-600 text-amber-600 rounded-lg hover:bg-amber-50 transition-colors">
@@ -327,20 +328,21 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 sm:p-8 text-white text-center">
             <h3 className="text-xl sm:text-2xl font-bold mb-2">Suscripción Profesional</h3>
             <p className="text-sm sm:text-base text-blue-100 mb-4">
-              Obtén tokens recurrentes cada mes con planes de suscripción
+              Obténe tokens cada mes con planes de suscripción
             </p>
+            <p className="text-s text-black-600">Por tiempo limitado:</p> <br />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
               <div className="bg-blue-500 rounded-lg p-4">
                 <p className="text-lg font-bold">$5,000/mes</p>
-                <p className="text-xs text-blue-100">100 tokens mensuales</p>
+                <p className="text-xs text-blue-100">20 tokens mensuales</p>
               </div>
               <div className="bg-blue-500 rounded-lg p-4">
                 <p className="text-lg font-bold">$10,000/mes</p>
-                <p className="text-xs text-blue-100">300 tokens mensuales</p>
+                <p className="text-xs text-blue-100">50 tokens mensuales</p>
               </div>
             </div>
             <Link
-              to="/register"
+              to="/suscripcion"
               className="inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
             >
               Ver Planes de Suscripción

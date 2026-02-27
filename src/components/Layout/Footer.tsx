@@ -33,12 +33,12 @@ const Footer: React.FC = () => {
             <h4 className="text-sm sm:text-base font-semibold text-white mb-4">Para Clientes</h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <Link to="/oficios" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#problem-input" className="text-gray-400 hover:text-white transition-colors">
                   Buscar Profesional
-                </Link>
+                </a>
               </li>
               <li>
-                <a href="#precios" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#como-funciona" className="text-gray-400 hover:text-white transition-colors">
                   Cómo Funciona
                 </a>
               </li>
@@ -68,11 +68,6 @@ const Footer: React.FC = () => {
                 <a href="#planes" className="text-gray-400 hover:text-white transition-colors">
                   Planes y Precios
                 </a>
-              </li>
-              <li>
-                <Link to="/landing-profesional" className="text-gray-400 hover:text-white transition-colors">
-                  Landing Profesionales
-                </Link>
               </li>
               <li>
                 <a href="mailto:soporte@profesionales.local" className="text-gray-400 hover:text-white transition-colors">
