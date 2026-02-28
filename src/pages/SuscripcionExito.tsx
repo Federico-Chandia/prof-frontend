@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const SuscripcionExito: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [searchParams] = useSearchParams();
   const [detalles, setDetalles] = useState<{
     paymentId?: string;
@@ -20,6 +21,18 @@ const SuscripcionExito: React.FC = () => {
       setDetalles({
         paymentId: paymentId || undefined,
         status: status || 'approved'
+      });
+    }
+
+    // refrescar información del usuario porque el backend habrá actualizado
+    // sus tokens y plan tras el webhook.
+    if (user) {
+      api.get('/auth/me').then(resp => {
+        if (resp.data.user && updateUser) {
+          updateUser(resp.data.user);
+        }
+      }).catch(err => {
+        console.warn('No se pudo refrescar usuario tras suscripción', err);
       });
     }
 

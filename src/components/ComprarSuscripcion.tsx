@@ -68,11 +68,17 @@ const ComprarSuscripcion: React.FC = () => {
       const response = await api.post('/payments/suscripcion', { plan: planId });
       
       if (response.data.success) {
-        // Redirigir a la URL de MercadoPago según el plan
-        const planUrl = planId === 'profesional'
+        // Redirigir a la URL de MercadoPago según el plan.
+        // añadimos external_reference para que el webhook pueda identificar el pago.
+        const baseUrl = planId === 'profesional'
           ? (import.meta.env.VITE_MP_PROFESIONAL_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=6dbd2e8163e140768b1c16d2b35358bb')
           : (import.meta.env.VITE_MP_PREMIUM_PLAN_URL || 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2293dd4fe51f416f9ad9d569e63c9bc9');
-        
+
+        // el servidor nos devolvió el id del pago para usarlo como referencia
+        const external = response.data.pagoId;
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        const planUrl = `${baseUrl}${separator}external_reference=${external}`;
+
         window.location.href = planUrl;
       }
     } catch (err) {
