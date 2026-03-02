@@ -6,6 +6,7 @@ export const detectCategoriaFromText = (text: string): { categoriaKey?: string; 
   const t = text.toLowerCase();
 
   // Palabras clave por categoría (simple heurístico MVP)
+  // palabras clave base por categoría; se pueden ampliar según se agreguen categorías
   const mapping: { [key: string]: string[] } = {
     plomero: ['pérdida', 'perdida', 'fuga', 'tubo', 'cañería', 'destap', 'destapación', 'termotanque', 'grifer', 'sanitario'],
     electricista: ['no hay luz', 'corte', 'cortocircuito', 'corriente', 'luz', 'tablero', 'enchufe', 'instalación eléctrica', 'bombilla', 'ilumin'],
@@ -13,7 +14,9 @@ export const detectCategoriaFromText = (text: string): { categoriaKey?: string; 
     cerrajero: ['llave', 'cerradura', 'cerrajo', 'abrir puerta', 'se trabó', 'se atascó'],
     albanil: ['huevo', 'revoque', 'revoques', 'humedad', 'pared', 'obra', 'albañil', 'reparación'],
     'aire-acondicionado': ['aire', 'split', 'capacity', 'carga de gas', 'climatización', 'calefacción'],
-    pintor: ['pintura', 'pintar', 'pintor', 'barniz']
+    pintor: ['pintura', 'pintar', 'pintor', 'barniz'],
+    carpintero: ['madera', 'mueble', 'puerta', 'carpintería', 'tablón', 'barniz'],
+    jardinero: ['pasto', 'césped', 'plantas', 'jardín', 'poda', 'arbustos']
   };
 
   // Buscar coincidencia de categoría

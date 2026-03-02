@@ -9,6 +9,7 @@ import ProfileProgress from '../components/ProfileProgress';
 import PricingBanner from '../components/PricingBanner';
 import ProfileChecklist from '../components/ProfileChecklist';
 import { useNotifications } from '../hooks/useNotifications';
+import CATEGORIAS from '../data/categorias';
 
 // Subcomponente para manejar subcategorías dinámicas.
 type SubcategoryFieldProps = {
@@ -24,7 +25,9 @@ const SUBCATEGORIES: Record<string, string[]> = {
   'Cerrajería': ['Apertura de puertas','Cambio de cerraduras','Llaves perdidas','Cerraduras de seguridad'],
   'Albañilería': ['Reparaciones generales','Revoques','Humedad','Pequeñas obras'],
   'Aire acondicionado': ['Instalación','Reparación','Carga de gas','Mantenimiento'],
-  'Pintura': ['Pintura interiores','Pintura exteriores','Barnizado']
+  'Pintura': ['Pintura interiores','Pintura exteriores','Barnizado'],
+  'Carpintería': ['Muebles a medida','Reparación de muebles','Instalación de puertas'],
+  'Jardinería': ['Corte de pasto','Plantaciones','Mantenimiento general']
 };
 
 // Mapear etiquetas human-readable a los slugs aceptados por el backend
@@ -35,10 +38,13 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
   'Cerrajería': 'servicios-hogar',
   'Albañilería': 'servicios-hogar',
   'Aire acondicionado': 'servicios-hogar',
-  'Pintura': 'servicios-hogar'
+  'Pintura': 'servicios-hogar',
+  'Carpintería': 'servicios-hogar',
+  'Jardinería': 'servicios-hogar'
 };
 
-const ALLOWED_PROFESIONS = new Set(['plomero','electricista','gasista','pintor','albanil','cerrajero','aire-acondicionado']);
+// no hay lista rígida, el usuario elige entre las categorías definidas en datos
+
 
 const SLUG_TO_CATEGORY: Record<string, string> = Object.keys(CATEGORY_TO_SLUG).reduce((acc, key) => {
   const slug = CATEGORY_TO_SLUG[key];
@@ -420,8 +426,9 @@ const MiPerfil: React.FC = () => {
     // Construir payload seguro para el backend
     const payload: any = { ...formData };
 
-    // Establecer siempre como electricista
-    payload.tipoOficio = 'electricista';
+    // usar el oficio seleccionado por el profesional
+    payload.tipoOficio = formData.tipoOficio;
+    // categoría general (todo sigue dentro de servicios-hogar)
     payload.categoria = 'servicios-hogar';
 
     // Incluir fotos del portfolio en el payload
@@ -589,6 +596,23 @@ const MiPerfil: React.FC = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Nuevo campo para seleccionar el tipo de oficio/rubro */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rubro / Oficio
+                    </label>
+                    <select
+                      value={formData.tipoOficio}
+                      onChange={(e) => setFormData({...formData, tipoOficio: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Seleccionar rubro</option>
+                      {CATEGORIAS.map(c => (
+                        <option key={c.key} value={c.key}>{c.label}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -711,9 +735,9 @@ const MiPerfil: React.FC = () => {
                     </label>
                     <textarea
                       value={formData.descripcion}
-                      onChange={(e) => setFormData({...formData, descripcion: e.target.value, tipoOficio: 'electricista'})}
+                      onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
                       rows={4}
-                      placeholder="Describe los servicios eléctricos que ofreces, tu experiencia y especialidades..."
+                      placeholder="Describe los servicios que ofreces, tu experiencia y especialidades..."
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -761,7 +785,7 @@ const MiPerfil: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <span className="text-sm text-gray-500">Categoría:</span>
-                    <p className="font-medium text-lg">Electricista</p>
+                    <p className="font-medium text-lg capitalize">{oficio?.tipoOficio || 'Sin especificar'}</p>
                   </div>
                   
                   <div>

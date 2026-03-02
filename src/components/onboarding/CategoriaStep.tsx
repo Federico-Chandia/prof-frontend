@@ -1,44 +1,14 @@
 import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
+import CATEGORIAS from '../../data/categorias';
 
-const categorias = [
-  {
-    id: 'servicios-hogar',
-    nombre: 'Servicios del Hogar',
-    icono: '🏠',
-    profesiones: ['plomero', 'electricista', 'gasista', 'pintor', 'carpintero', 'cerrajero', 'otro']
-  },
-  {
-    id: 'construccion',
-    nombre: 'Construcción',
-    icono: '🔨',
-    profesiones: ['albañil', 'carpintero', 'pintor', 'electricista', 'otro']
-  },
-  {
-    id: 'tecnologia',
-    nombre: 'Tecnología',
-    icono: '💻',
-    profesiones: ['reparación-celulares', 'reparación-computadoras', 'instalación-redes', 'otro']
-  },
-  {
-    id: 'salud-bienestar',
-    nombre: 'Salud & Bienestar',
-    icono: '💆',
-    profesiones: ['masajista', 'nutricionista', 'entrenador-personal', 'otro']
-  },
-  {
-    id: 'educacion',
-    nombre: 'Educación',
-    icono: '📚',
-    profesiones: ['clases-particulares', 'tutoría', 'idiomas', 'otro']
-  },
-  {
-    id: 'transporte',
-    nombre: 'Transporte',
-    icono: '🚗',
-    profesiones: ['taxi', 'mudanza', 'mensajería', 'otro']
-  }
-];
+// convert CATEGORIAS to the previous shape used by this component
+const categorias = CATEGORIAS.map(c => ({
+  id: c.key,
+  nombre: c.label,
+  icono: c.icon,
+  profesiones: [...c.subcategorias.map(s => s.key), 'otro']
+}));
 
 interface CategoriaStepProps {
   onNext: (data: any) => void;

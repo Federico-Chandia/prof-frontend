@@ -60,7 +60,7 @@ const SearchHero: React.FC = () => {
           onKeyDown={handleKeyDown}
           id="home-problem-input"
           type="text"
-          placeholder="Ej: no tengo luz"
+          placeholder="Ej: necesito ayuda con una filtración"
           className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg sm:rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-800 shadow-sm"
         />
         <button

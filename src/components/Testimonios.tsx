@@ -20,18 +20,18 @@ const Testimonios: React.FC = () => {
       ciudad: 'Villa Urquiza',
       rating: 5,
       texto:
-        'No tenia idea de a quién llamar cuando se derritio el enchufe del calefón. Busque por acá, encontré una electricista en 5 minutos y listo. Vino y arregló todo. Muy recomendable.',
+        'No tenía idea de a quién recurrir hasta que usé la plataforma. En minutos encontré un profesional que resolvió mi problema. Muy recomendable.',
       imagen:
         '',
     },
     {
       id: 2,
       autor: 'Juan Carlos Gómez',
-      rol: 'Electricista',
+      rol: 'Profesional',
       ciudad: 'La Plata',
       rating: 5,
       texto:
-        'Laburo hace años y con esta pagina es más facil conseguir nuevos clientes',
+        'Trabajo hace años y con esta página encuentro clientes de distintos oficios. Me ayudó a ampliar mi negocio.',
       imagen:
         '',
     },

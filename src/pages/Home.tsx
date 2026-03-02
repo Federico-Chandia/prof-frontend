@@ -17,10 +17,10 @@ const Home: React.FC = () => {
         <div className="w-full mx-auto px-3 sm:px-4 py-8 sm:py-12 md:py-16">
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
-             ¿Se te cortó la luz o salta la térmica? 
+             ¿Necesitás ayuda profesional en tu hogar?
             </h1>
             <p  className="text-base sm:text-lg mb-6 sm:mb-8">
-             Encontrá un electricista cerca tuyo en minutos.
+             Encontrá al profesional adecuado para tu rubro en minutos.
             </p>
 
             <SearchHero />
@@ -81,12 +81,12 @@ const Home: React.FC = () => {
       <p className="font-light text-center text-xs sm:text-sm py-4 sm:py-6 px-3">⚠️ La electricidad es peligrosa. Contactá un profesional calificado.</p>
     
 
-      {/* Categorías destacadas
+      {/* Categorías destacadas */}
       <div className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Categorías destacadas</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Rubros disponibles</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {CATEGORIAS.filter(c => ['plomero', 'electricista', 'gasista', 'cerrajero', 'albanil', 'aire-acondicionado'].includes(c.key)).map((c) => (
+            {CATEGORIAS.map((c) => (
               <button
                 key={c.key}
                 onClick={() => window.location.assign(`/oficios?tipo=${encodeURIComponent(c.key)}`)}
@@ -99,7 +99,7 @@ const Home: React.FC = () => {
             ))}
           </div>
         </div>
-      </div> */}
+      </div>
 
       {/* CTA para profesionales */}
       <div className="bg-white py-8 sm:py-12">

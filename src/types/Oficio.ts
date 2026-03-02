@@ -3,7 +3,7 @@ import { User } from './User';
 export interface Oficio {
   _id: string;
   usuario: User;
-  tipoOficio: 'plomero' | 'electricista' | 'gasista' | 'pintor' | 'carpintero' | 'albañil' | 'jardinero' | 'cerrajero' | 'aire-acondicionado' | 'otro';
+  tipoOficio: string; // permitimos cualquier clave de categoría, no solo un conjunto fijo
   descripcion: string;
   experiencia: number;
   tarifas: {

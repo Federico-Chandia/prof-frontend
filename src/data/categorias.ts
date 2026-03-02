@@ -90,6 +90,26 @@ const CATEGORIAS: Categoria[] = [
       { key: 'pintura-exteriores', label: 'Pintura exteriores' },
       { key: 'barnizado', label: 'Barnizado' }
     ]
+  },
+  {
+    key: 'carpintero',
+    label: 'Carpintería',
+    icon: '🪚',
+    subcategorias: [
+      { key: 'muebles-a-medida', label: 'Muebles a medida' },
+      { key: 'reparacion-muebles', label: 'Reparación de muebles' },
+      { key: 'instalacion-puertas', label: 'Instalación de puertas' }
+    ]
+  },
+  {
+    key: 'jardinero',
+    label: 'Jardinería',
+    icon: '🌿',
+    subcategorias: [
+      { key: 'corte-pasto', label: 'Corte de pasto' },
+      { key: 'plantaciones', label: 'Plantaciones' },
+      { key: 'mantenimiento', label: 'Mantenimiento general' }
+    ]
   }
 ];
 

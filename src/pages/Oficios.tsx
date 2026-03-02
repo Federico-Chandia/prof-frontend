@@ -41,13 +41,13 @@ const Oficios: React.FC = () => {
   } = useBusquedaProfesionales(filters.tipoOficio);
 
   useEffect(() => {
-    // Establecer electricista por defecto ya que solo trabajamos con electricistas
-    setFilters(prev => ({ 
-      ...prev, 
-      tipoOficio: 'electricista',
+    // Si el parámetro viene por URL, usarlo; de lo contrario no forzamos un tipo.
+    setFilters(prev => ({
+      ...prev,
+      tipoOficio: tipoOficioParam || '',
       barrio: zonaParam || ''
     }));
-  }, [zonaParam]);
+  }, [zonaParam, tipoOficioParam]);
 
   useEffect(() => {
     if (usarBusquedaUbicacion && filters.tipoOficio) {
@@ -77,8 +77,9 @@ const Oficios: React.FC = () => {
       setLoading(true);
       const params = new URLSearchParams();
       
-      // Siempre buscar electricistas
-      params.append('tipoOficio', 'electricista');
+      if (filters.tipoOficio) {
+        params.append('tipoOficio', filters.tipoOficio);
+      }
       if (filters.barrio) {
         // Buscar tanto en barrio como en zonas de trabajo
         params.append('zona', filters.barrio);
@@ -135,7 +136,10 @@ const Oficios: React.FC = () => {
           <div className="mb-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
             Resultados para: <strong>"{qParam}"</strong>
             {tipoOficioParam && (
-              <span> — Categoría: <strong>Electricista</strong></span>
+              (() => {
+                const found = CATEGORIAS.find(c => c.key === tipoOficioParam);
+                return <span> — Categoría: <strong>{found ? found.label : tipoOficioParam}</strong></span>;
+              })()
             )}
             {subParam && (
               <span> — Problema: <strong>{
@@ -202,11 +206,14 @@ const Oficios: React.FC = () => {
                 </label>
                 <select
                   name="tipoOficio"
-                  value="electricista"
-                  disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+                  value={filters.tipoOficio}
+                  onChange={handleFilterChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="electricista">Electricista</option>
+                  <option value="">Todos los rubros</option>
+                  {CATEGORIAS.map(c => (
+                    <option key={c.key} value={c.key}>{c.label}</option>
+                  ))}
                 </select>
               </div>
               
