@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-
+// A futuro, solo personas que hayan usado la plataforma podrán dejar testimonios, y se mostrarán dinámicamente desde la base de datos. Por ahora, son estáticos para mostrar el diseño.
 interface Testimonio {
   id: number;
   autor: string;
@@ -22,7 +22,7 @@ const Testimonios: React.FC = () => {
       texto:
         'No tenia idea de a quién llamar cuando se derritio el enchufe del calefón. Busque por acá, encontré una electricista en 5 minutos y listo. Vino y arregló todo. Muy recomendable.',
       imagen:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&q=80',
+        '',
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ const Testimonios: React.FC = () => {
       texto:
         'Laburo hace años y con esta pagina es más facil conseguir nuevos clientes',
       imagen:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&q=80',
+        '',
     },
     {
       id: 3,
@@ -44,7 +44,7 @@ const Testimonios: React.FC = () => {
       texto:
         'La recomiendo, te facilita mucho las cosas y a generar confianza con nuevos clientes. Genial ',
       imagen:
-        'https://imgs.search.brave.com/qDWluaY6-B4-bQzGaSMd9hn3LdZXou9TGGT34ffalLs/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4w/LnVuY29tby5jb20v/ZXMvcG9zdHMvMi84/LzgvY29tb19kZXRl/Y3Rhcl91bl9jb3J0/b2NpcmN1aXRvX2Vu/X2Nhc2FfNDU4ODJf/NjAwLmpwZw',
+        '',
       } 
   ]
 
