@@ -237,8 +237,6 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Sección de Testimonios */}
-      <Testimonios />
 
       {/* Sección de Precios Mejorada */}
       <section id="planes" className="py-8 sm:py-16 bg-gray-50">
