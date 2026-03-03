@@ -43,11 +43,6 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="#testimonios" className="text-gray-400 hover:text-white transition-colors">
-                  Testimonios
-                </a>
-              </li>
-              <li>
                 <Link to="/" className="text-gray-400 hover:text-white transition-colors">
                   Inicio
                 </Link>
@@ -82,9 +77,18 @@ const Footer: React.FC = () => {
             <h4 className="text-sm sm:text-base font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <a href="/legal/terminos-y-condiciones" className="text-gray-400 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
+                {/* open the same HTML viewer used on the register form */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5003/api';
+                    const url = apiUrl.replace('/api', '') + '/api/legal/view/terminos-condiciones';
+                    window.open(url, '_blank', 'width=900,height=700,scrollbars=yes');
+                  }}
+                  className="text-gray-400 hover:text-white transition-colors underline"
+                >
                   Términos y Condiciones
-                </a>
+                </button>
               </li>
               <li>
                 <a href="/legal/politica-de-privacidad" className="text-gray-400 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">

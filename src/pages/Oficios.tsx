@@ -10,7 +10,9 @@ import CATEGORIAS from '../data/categorias';
 
 const Oficios: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const tipoOficioParam = searchParams.get('tipo') || '';
+  // the URL may include either "tipo" (from home cards) or
+  // "tipoOficio" (from location search/modal), so check both.
+  const tipoOficioParam = searchParams.get('tipo') || searchParams.get('tipoOficio') || '';
   const qParam = searchParams.get('q') || '';
   const subParam = searchParams.get('sub') || '';
   const zonaParam = searchParams.get('zona') || '';
@@ -62,13 +64,15 @@ const Oficios: React.FC = () => {
     const loadBarrios = async () => {
       try {
         const response = await api.get('/oficios/barrios/disponibles');
-        setBarriosDisponibles(response.data.barrios);
-      } catch (error) {
-        console.error('Error loading barrios:', error);
-        handleError(error, 'loading barrios');
+        // always keep an array to avoid undefined crashes
+        setBarriosDisponibles(response.data.barrios || []);
+    } catch (error) {
+      console.error('Error loading barrios:', error);
+      handleError(error, 'loading barrios');
+      // on failure, clear the list so UI doesn’t try to map undefined
+      setBarriosDisponibles([]);
       }
     };
-
     loadBarrios();
   }, []);
 
@@ -115,7 +119,7 @@ const Oficios: React.FC = () => {
   };
 
   // Filtrar resultados por texto de búsqueda
-  const filteredResults = (usarBusquedaUbicacion ? profesionales : oficios).filter((profesional) => {
+  const filteredResults = (usarBusquedaUbicacion ? (profesionales || []) : (oficios || [])).filter((profesional) => {
     const nombreUsuario = profesional.usuario?.nombre || '';
     const profesion = profesional.profesion || profesional.tipoOficio || '';
     const searchLower = searchText.toLowerCase();
@@ -228,7 +232,7 @@ const Oficios: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Todas las zonas</option>
-                  {barriosDisponibles.map((barrio) => (
+                  {(barriosDisponibles || []).map((barrio) => (
                     <option key={barrio} value={barrio}>
                       {barrio}
                     </option>

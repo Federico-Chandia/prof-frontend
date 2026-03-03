@@ -17,10 +17,10 @@ const Home: React.FC = () => {
         <div className="w-full mx-auto px-3 sm:px-4 py-8 sm:py-12 md:py-16">
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
-             ¿Necesitás ayuda profesional en tu hogar?
+             ¿Necesitas ayuda con un problema en tu hogar?
             </h1>
             <p  className="text-base sm:text-lg mb-6 sm:mb-8">
-             Encontrá al profesional adecuado para tu rubro en minutos.
+             Encontrá al profesional adecuado para lo que necesitas en minutos.
             </p>
 
             <SearchHero />
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
             <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
                 <img
-                  src="https://imgs.search.brave.com/RNUKliIZNpotOTq4SDxMKtZ7U8OKmACPOqdxCZ1rtIY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMjA3/ODg2MTc4NC9lcy9m/b3RvL2NhYmxlYWRv/LWRlZmVjdHVvc28t/Y2FyYm9uaXphZG8t/eS1xdWVtYWRvLWNv/bmNlcHRvLWRlLXBl/bGlncm8tZGUtaW5j/ZW5kaW8tcG9yLWNv/cnRvY2lyY3VpdG8u/anBnP2I9MSZzPTYx/Mng2MTImdz0wJms9/MjAmYz1BNU4zUkhS/aHpXdEZMcVlXVnJT/N29fQzdkdGVQNFpH/bXVFX1RLcnY3NGFB/PQ"
+                  src="https://media.istockphoto.com/id/1478442741/photo/roof-is-leaking-pipe-rupture-at-home-water-drips-into-buckets-in-living-room-angry-couple-in.jpg?s=612x612&w=0&k=20&c=mKLpjluVwpFdPzY_bqbDZm2f_0D0ZyD_uUC23igx-Zo="
                   alt="Buscar profesional"
                   className="w-full h-full object-cover"
                 />
@@ -64,7 +64,7 @@ const Home: React.FC = () => {
             <div className="text-left sm:text-center bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="h-32 sm:h-40 bg-gray-200 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1564544430321-8d0eb062b11e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHB1bGdhcmVzJTIwaGFjaWElMjBhcnJpYmF8ZW58MHx8MHx8fDA%3D"
+                  src="https://media.istockphoto.com/id/1312300932/photo/construction-worker-team-contractor-handshake-after-finishing-business-meeting-to-start-up.jpg?s=612x612&w=0&k=20&c=DEJysAleZ9pKursu0W33hf60a2db4LjBBzEY_jANHvw="
                   alt="Chat directo"
                   className="w-full h-full object-cover"
                 />
@@ -77,9 +77,7 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-      <p className="font-light text-center text-xs sm:text-sm py-4 sm:py-6 px-3">⚠️ La electricidad es peligrosa. Contactá un profesional calificado.</p>
-    
+      </div>    
 
       {/* Categorías destacadas */}
       <div className="bg-white py-20">
@@ -246,7 +244,7 @@ const Home: React.FC = () => {
               Planes y Precios
             </h2>
             <p className="text-sm sm:text-base text-gray-600">
-              Elige el plan que mejor se adapte a tus necesidades de profesional
+              Elige el plan que mejor se adapte a tus necesidades profesionales
             </p>
           </div>
 
