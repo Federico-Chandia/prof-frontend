@@ -528,7 +528,7 @@ const Register: React.FC = () => {
             </p>
             
             <div className="space-y-3">
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <input
                   id="terminos"
                   type="checkbox"
@@ -536,7 +536,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, terminos: e.target.checked });
                   }}
-                  className="h-4 w-4 mt-0.5 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
+                  className="h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
                 />
                 <label htmlFor="terminos" className="ml-3 text-sm text-gray-700">
                   Acepto los{' '}
@@ -559,7 +559,7 @@ const Register: React.FC = () => {
               </div>
 
               {/* Política de Privacidad */}
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <input
                   id="privacidad"
                   type="checkbox"
@@ -567,7 +567,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, privacidad: e.target.checked });
                   }}
-                  className="h-4 w-4 mt-0.5 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
+                  className="h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
                 />
                 <label htmlFor="privacidad" className="ml-3 text-sm text-gray-700">
                   Acepto la{' '}
@@ -590,7 +590,7 @@ const Register: React.FC = () => {
               </div>
 
               {/* Política de Cookies */}
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <input
                   id="cookies"
                   type="checkbox"
@@ -598,7 +598,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, cookies: e.target.checked });
                   }}
-                  className="h-4 w-4 mt-0.5 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
+                  className="h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer flex-shrink-0"
                 />
                 <label htmlFor="cookies" className="ml-3 text-sm text-gray-700">
                   Acepto la{' '}
