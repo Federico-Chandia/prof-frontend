@@ -4,13 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const Register: React.FC = () => {
+  // Leer parámetro de rol de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const rolFromUrl = urlParams.get('rol');
+  const rolInicial = (rolFromUrl === 'profesional' || rolFromUrl === 'cliente') ? rolFromUrl : 'cliente';
+
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
     password: '',
     confirmPassword: '',
     telefono: '',
-    rol: 'cliente' as 'cliente' | 'profesional',
+    rol: rolInicial as 'cliente' | 'profesional',
     direccion: {
       calle: '',
       barrio: '',
@@ -19,6 +24,7 @@ const Register: React.FC = () => {
     },
     genero: 'prefiero_no_decir' as 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir',
     preferenciaCliente: 'sin_preferencia' as 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres',
+    preferenciaProfesional: 'sin_preferencia' as 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -474,7 +480,7 @@ const Register: React.FC = () => {
                 </select>
               </div>
 
-              {formData.rol === 'profesional' && (
+              {formData.rol === 'profesional' ? (
                 <div>
                   <label htmlFor="preferenciaCliente" className="block text-sm font-medium text-gray-700">
                     ¿Deseas indicar alguna preferencia sobre tus clientes? (opcional)
@@ -489,6 +495,23 @@ const Register: React.FC = () => {
                     <option value="sin_preferencia">Sin preferencia</option>
                     <option value="solo_mujeres">Solo acepto clientes mujeres</option>
                     <option value="solo_hombres">Solo acepto clientes hombres</option>
+                  </select>
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="preferenciaProfesional" className="block text-sm font-medium text-gray-700">
+                    ¿Deseas indicar alguna preferencia sobre los profesionales? (opcional)
+                  </label>
+                  <select
+                    id="preferenciaProfesional"
+                    name="preferenciaProfesional"
+                    value={formData.preferenciaProfesional}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="sin_preferencia">Sin preferencia</option>
+                    <option value="solo_mujeres">Solo profesionales mujeres</option>
+                    <option value="solo_hombres">Solo profesionales hombres</option>
                   </select>
                 </div>
               )}

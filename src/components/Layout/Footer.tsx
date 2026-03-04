@@ -15,17 +15,6 @@ const Footer: React.FC = () => {
             <p className="text-xs sm:text-sm text-gray-400 mb-4">
               Conecta con profesionales verificados en tu zona. Rápido, seguro y confiable.
             </p>
-            <div className="flex gap-3">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Twitter">
-                𝕏
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Facebook">
-                f
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Instagram">
-                📷
-              </a>
-            </div>
           </div>
 
           {/* Para Clientes */}
@@ -55,7 +44,7 @@ const Footer: React.FC = () => {
             <h4 className="text-sm sm:text-base font-semibold text-white mb-4">Para Profesionales</h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <Link to="/register" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/register?rol=profesional" className="text-gray-400 hover:text-white transition-colors">
                   Registrarse
                 </Link>
               </li>
@@ -65,7 +54,7 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="mailto:soporte@profesionales.local" className="text-gray-400 hover:text-white transition-colors">
+                <a href="mailto:Soporte.profesionales@outlook.com" className="text-gray-400 hover:text-white transition-colors">
                   Contacto
                 </a>
               </li>
@@ -101,7 +90,7 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="mailto:legal@profesionales.local" className="text-gray-400 hover:text-white transition-colors">
+                <a href="mailto:Soporte.profesionales@outlook.com" className="text-gray-400 hover:text-white transition-colors">
                   Reportar Abuso
                 </a>
               </li>

@@ -71,7 +71,7 @@ const Home: React.FC = () => {
               </div>
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">💬</div>
-                <h3 className="text-lg font-semibold mb-2">3. Contacto directo y rápido</h3>
+                <h3 className="text-lg font-semibold mb-2">3️⃣. Contacto directo y rápido</h3>
                 <p className="text-gray-600 text-sm sm:text-base">Iniciá el chat y resolvé el problema sin trámites.</p>
               </div>
             </div>
@@ -105,7 +105,7 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 sm:p-8 rounded-lg text-center">
             <h3 className="text-xl sm:text-2xl font-semibold mb-4">¿Sos profesional?</h3>
             <p className="text-gray-700 mb-6 text-sm sm:text-base">Conseguí más clientes hoy</p>
-            <Link to="/register" className="inline-block w-full sm:w-auto bg-blue-600 text-white px-8 py-3 sm:py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors">Registrarme como profesional</Link>
+            <Link to="/register?rol=profesional" className="inline-block w-full sm:w-auto bg-blue-600 text-white px-8 py-3 sm:py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors">Registrarme como profesional</Link>
           </div>
         </div>
       </div>
