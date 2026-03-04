@@ -110,6 +110,7 @@ const MiPerfil: React.FC = () => {
     whatsappLaboral: '',
     // Servicios
     tipoOficio: '',
+    otraCategoria: '', // texto libre cuando seleccionan "Otros"
     descripcion: '',
     experiencia: 0,
     disponibilidadHoraria: {
@@ -279,14 +280,17 @@ const MiPerfil: React.FC = () => {
         
         setOficio(miOficio);
         setPortfolioFotos(miOficio.fotos || []);
+        // determine if the stored tipoOficio matches a known key
+        const isKnown = CATEGORIAS.some(c => c.key === miOficio.tipoOficio);
         setFormData({
           nombreCompleto: miOficio.usuario.nombre || '',
           fotoPerfil: miOficio.usuario.avatar || '',
           telefono: miOficio.usuario.telefono || '',
           whatsappLaboral: miOficio.whatsappLaboral || '',
-          tipoOficio: miOficio.tipoOficio,
+          tipoOficio: isKnown ? miOficio.tipoOficio : 'otros',
           categoriaPrincipal: SLUG_TO_CATEGORY[miOficio.categoria] || miOficio.categoria || (miOficio.tipoOficio || ''),
           subcategoria: miOficio.profesionPersonalizada || '',
+          otraCategoria: isKnown ? '' : miOficio.tipoOficio,
           descripcion: miOficio.descripcion,
           experiencia: miOficio.experiencia,
           disponibilidadHoraria: miOficio.disponibilidadHoraria || formData.disponibilidadHoraria,
@@ -310,7 +314,8 @@ const MiPerfil: React.FC = () => {
           telefono: user?.telefono || ''
         ,
           categoriaPrincipal: prev.categoriaPrincipal || '',
-          subcategoria: prev.subcategoria || ''
+          subcategoria: prev.subcategoria || '',
+          otraCategoria: prev.otraCategoria || ''
         }));
       }
     } catch (error) {
@@ -422,14 +427,24 @@ const MiPerfil: React.FC = () => {
       setMessage({ type: 'error', text: 'Debe especificar una tarifa por hora válida' });
       return;
     }
+    if (formData.tipoOficio === 'otros' && !formData.otraCategoria.trim()) {
+      setMessage({ type: 'error', text: 'Por favor especificá el rubro si elegiste "Otros"' });
+      return;
+    }
 
     // Construir payload seguro para el backend
     const payload: any = { ...formData };
 
     // usar el oficio seleccionado por el profesional
-    payload.tipoOficio = formData.tipoOficio;
-    // categoría general (todo sigue dentro de servicios-hogar)
-    payload.categoria = 'servicios-hogar';
+    // si elegió "otros" usamos el texto libre, de lo contrario el slug estándar
+    if (formData.tipoOficio === 'otros') {
+      payload.tipoOficio = formData.otraCategoria.trim() || 'otros';
+      payload.categoria = 'otros';
+    } else {
+      payload.tipoOficio = formData.tipoOficio;
+      // categoría general sigue siendo servicios-hogar para los rubros predefinidos
+      payload.categoria = 'servicios-hogar';
+    }
 
     // Incluir fotos del portfolio en el payload
     payload.fotos = portfolioFotos;
@@ -611,6 +626,7 @@ const MiPerfil: React.FC = () => {
                       {CATEGORIAS.map(c => (
                         <option key={c.key} value={c.key}>{c.label}</option>
                       ))}
+                      <option value="otros">Otros</option>
                     </select>
                   </div>
                 </div>
