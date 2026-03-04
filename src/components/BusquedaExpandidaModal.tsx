@@ -36,7 +36,7 @@ const BusquedaExpandidaModal: React.FC<BusquedaExpandidaModalProps> = ({
               <h4 className="font-semibold text-blue-800 mb-1">Búsqueda extendida</h4>
               <p className="text-sm text-blue-700">
                 Podemos buscar profesionales en un radio de hasta 50km. 
-                <strong>Pueden aplicar cargos adicionales por traslado</strong> (aproximadamente $50 por km adicional después de los primeros 10km gratuitos).
+                <strong>Es posible que se apliquen cargos adicionales por traslado</strong>.
               </p>
             </div>
           </div>
