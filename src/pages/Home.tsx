@@ -43,7 +43,7 @@ const Home: React.FC = () => {
               </div>
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">🗺️</div>
-                <h3 className="text-lg font-semibold mb-2">1️⃣ Describís tu problema</h3>
+                <h3 className="text-lg font-semibold mb-2">1️⃣. Describís tu problema</h3>
                 <p className="text-gray-600 text-sm sm:text-base">Selecciona dónde necesitas ayuda</p>
               </div>
             </div>
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
               </div>
               <div className="p-4 sm:p-6">
                 <div className="text-3xl mb-3">👷</div>
-                <h3 className="text-lg font-semibold mb-2">2️⃣ Elegís un profesional cercano</h3>
+                <h3 className="text-lg font-semibold mb-2">2️⃣. Elegís un profesional cercano</h3>
                 <p className="text-gray-600 text-sm sm:text-base">Mira reseñas y disponibilidad</p>
               </div>
             </div>
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
                 <h3 className="font-bold text-gray-900">Conecta con Clientes</h3>
               </div>
               <p className="text-gray-700 text-sm">
-                Gasta tokens para responder solicitudes y acceder a información de clientes.
+                Usa tokens para responder solicitudes y acceder a información de clientes.
               </p>
             </div>
 
@@ -153,7 +153,7 @@ const Home: React.FC = () => {
                 <h3 className="font-bold text-gray-900">Suscripciones</h3>
               </div>
               <p className="text-gray-700 text-sm">
-                Obtén tokens recurrentes con planes de suscripción mensual a precios especiales.
+                Recibi tokens recurrentes con planes de suscripción mensual a precios especiales.
               </p>
             </div>
           </div>
@@ -185,7 +185,7 @@ const Home: React.FC = () => {
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1 text-sm">Confirma tu respuesta</h4>
                   <p className="text-gray-700 text-xs">
-                    Si decides responder, se usa un token.
+                    Si la Aceptas, se usa un token.
                   </p>
                 </div>
               </div>
@@ -227,7 +227,7 @@ const Home: React.FC = () => {
             </p>
             <ul className="space-y-2 text-sm text-blue-800">
               <li>• Los tokens NO son dinero real ni se pueden convertir a efectivo</li>
-              <li>• Solo se gastan cuando confirmas que respondes a una solicitud</li>
+              <li>• Solo se gastan cuando aceptas a una solicitud</li>
               <li>• Los tokens no son acumulativos</li>
               <li>• La plataforma renueva tus tokens mensualmente de acuerdo a tu plan</li>
             </ul>
@@ -324,7 +324,7 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 sm:p-8 text-white text-center">
             <h3 className="text-xl sm:text-2xl font-bold mb-2">Suscripción Profesional</h3>
             <p className="text-sm sm:text-base text-blue-100 mb-4">
-              Obténe tokens cada mes con planes de suscripción
+              Obtene tokens cada mes con planes de suscripción
             </p>
             <p className="text-s text-black-600">Por tiempo limitado:</p> <br />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
