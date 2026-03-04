@@ -536,7 +536,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, terminos: e.target.checked });
                   }}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                  className="mt-1 h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                 />
                 <label htmlFor="terminos" className="ml-3 text-sm text-gray-700">
                   Acepto los{' '}
@@ -567,7 +567,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, privacidad: e.target.checked });
                   }}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                  className="mt-1 h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                 />
                 <label htmlFor="privacidad" className="ml-3 text-sm text-gray-700">
                   Acepto la{' '}
@@ -598,7 +598,7 @@ const Register: React.FC = () => {
                   onChange={(e) => {
                     setLegalAcceptance({ ...legalAcceptance, cookies: e.target.checked });
                   }}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                  className="mt-1 h-4 w-4 accent-blue-600 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                 />
                 <label htmlFor="cookies" className="ml-3 text-sm text-gray-700">
                   Acepto la{' '}

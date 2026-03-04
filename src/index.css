@@ -57,11 +57,20 @@
     min-width: 48px;
   }
   
-  /* Mejorar inputs en móvil */
-  input, textarea, select {
+  /* Mejorar inputs en móvil (pero no checkbox/radio) */
+  /* los elementos tipo checkbox/radio necesitan su apariencia nativa para ser visibles; la regla global
+     antes la eliminaba y dejaba casillas invisibles en el registro. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+  }
+
+  /* Si queremos colorear checkboxes/radios con tailwind 3+, usamos la utilidad `accent-<color>` */
+  .accent-blue-600 {
+    accent-color: theme('colors.blue.600');
   }
   
   /* Image optimization */
