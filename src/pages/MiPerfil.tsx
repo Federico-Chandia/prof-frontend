@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Oficio } from '../types';
 import api from '../services/api';
 import ZonasTrabajoSelector from '../components/ZonasTrabajoSelector';
@@ -84,6 +84,7 @@ const SubcategoryField: React.FC<SubcategoryFieldProps> = ({ categoria, value, o
 
 const MiPerfil: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [oficio, setOficio] = useState<Oficio | null>(null);
   const [estadisticas, setEstadisticas] = useState({
@@ -537,9 +538,18 @@ const MiPerfil: React.FC = () => {
         )}
 
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mi Perfil Profesional</h1>
-            <p className="text-gray-600 mt-2">Gestiona tu información y portfolio</p>
+          <div className="flex flex-col gap-4 w-full">
+            <button
+              onClick={() => navigate(-1)}
+              className="self-start p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+              title="Volver atrás"
+            >
+              ← Volver
+            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Mi Perfil Profesional</h1>
+              <p className="text-gray-600 mt-2">Gestiona tu información y portfolio</p>
+            </div>
           </div>
           <button
             onClick={() => setEditMode(!editMode)}

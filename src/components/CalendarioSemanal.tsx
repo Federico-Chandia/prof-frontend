@@ -8,6 +8,13 @@ interface CalendarioSemanalProps {
 const CalendarioSemanal: React.FC<CalendarioSemanalProps> = ({ reservas }) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
 
+  // Filtrar solo reservas activas (no completadas ni canceladas)
+  const reservasActivas = useMemo(() => {
+    return reservas.filter(r => 
+      r.estado !== 'completada' && r.estado !== 'cancelada' && r.fechaHora
+    );
+  }, [reservas]);
+
   const getStartOfWeek = (date: Date) => {
     const d = new Date(date);
     const day = d.getDay();
@@ -21,21 +28,17 @@ const CalendarioSemanal: React.FC<CalendarioSemanalProps> = ({ reservas }) => {
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999); // Incluir todo el último día
     
-    console.log('Filtrando reservas para semana:', startOfWeek, 'a', endOfWeek);
-    console.log('Total reservas disponibles:', reservas.length);
-    
-    const reservasFiltradas = reservas.filter(reserva => {
-      const reservaDate = new Date(reserva.fechaHora);
-      const enRango = reservaDate >= startOfWeek && reservaDate <= endOfWeek;
-      if (enRango) {
-        console.log('Reserva en rango:', reserva.cliente.nombre, reservaDate);
+    const reservasFiltradas = reservasActivas.filter(reserva => {
+      try {
+        const reservaDate = new Date(reserva.fechaHora);
+        return reservaDate >= startOfWeek && reservaDate <= endOfWeek;
+      } catch {
+        return false;
       }
-      return enRango;
     });
     
-    console.log('Reservas filtradas para la semana:', reservasFiltradas.length);
     return reservasFiltradas;
-  }, [reservas, currentWeek]);
+  }, [reservasActivas, currentWeek]);
 
   const getDaysOfWeek = () => {
     const startOfWeek = getStartOfWeek(currentWeek);
@@ -72,8 +75,10 @@ const CalendarioSemanal: React.FC<CalendarioSemanalProps> = ({ reservas }) => {
     return dayReservas.find(reserva => {
       const reservaDate = new Date(reserva.fechaHora);
       const reservaHour = reservaDate.getHours();
-      // Mostrar la reserva en el slot de la hora correspondiente
-      return reservaHour === slotHour;
+      const duracionHoras = Math.ceil((reserva.duracionEstimada || 60) / 60);
+      
+      // Mostrar la reserva si comienza en esta hora o dentro de su duración
+      return reservaHour === slotHour || (reservaHour < slotHour && reservaHour + duracionHoras > slotHour);
     });
   };
 
@@ -202,20 +207,20 @@ const CalendarioSemanal: React.FC<CalendarioSemanalProps> = ({ reservas }) => {
             <div className="text-sm text-gray-600">Total Citas</div>
           </div>
           <div>
-            <div className="text-lg font-semibold text-green-600">
-              {reservasSemana.filter(r => r.estado === 'completada').length}
+            <div className="text-lg font-semibold text-blue-600">
+              {reservasSemana.filter(r => r.estado === 'orden_generada').length}
             </div>
-            <div className="text-sm text-gray-600">Completadas</div>
+            <div className="text-sm text-gray-600">Órdenes Generadas</div>
           </div>
           <div>
-            <div className="text-lg font-semibold text-blue-600">
+            <div className="text-lg font-semibold text-purple-600">
               {reservasSemana.filter(r => r.estado === 'en_progreso').length}
             </div>
-            <div className="text-sm text-gray-600">Confirmadas</div>
+            <div className="text-sm text-gray-600">En Progreso</div>
           </div>
           <div>
-            <div className="text-lg font-semibold text-yellow-600">
-              {reservasSemana.filter(r => r.estado === 'orden_generada').length}
+            <div className="text-lg font-semibold text-amber-600">
+              {reservasSemana.filter(r => r.estado === 'pendiente_confirmacion').length}
             </div>
             <div className="text-sm text-gray-600">Pendientes</div>
           </div>

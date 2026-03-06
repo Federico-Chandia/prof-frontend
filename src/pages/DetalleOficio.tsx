@@ -65,6 +65,13 @@ const DetalleOficio: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-4 p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+          title="Volver atrás"
+        >
+          ← Volver
+        </button>
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex flex-col sm:flex-row items-start gap-6 mb-6">
             <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">

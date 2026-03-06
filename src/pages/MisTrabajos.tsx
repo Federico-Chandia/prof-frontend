@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Reserva } from '../types';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -21,6 +21,7 @@ const MisTrabajos: React.FC = () => {
   const [oficioId, setOficioId] = useState<string | null>(null);
   const [completarModal, setCompletarModal] = useState<{reserva: Reserva} | null>(null);
   const [notasFinalizacion, setNotasFinalizacion] = useState('');
+  const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
@@ -275,9 +276,18 @@ const MisTrabajos: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Mis Trabajos</h1>
-              <p className="text-gray-600 mt-2">Gestiona tus reservas y revisa tu historial</p>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+                title="Volver atrás"
+              >
+                ← Volver
+              </button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Mis Trabajos</h1>
+                <p className="text-gray-600 mt-2">Gestiona tus reservas y revisa tu historial</p>
+              </div>
             </div>
             
             <div className="flex items-center gap-2 flex-wrap">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Shield, Users, Trash2, Ban, CheckCircle, Search, Key, CreditCard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 interface UserData {
@@ -26,6 +27,7 @@ interface AdminStats {
 }
 
 const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -163,6 +165,13 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-4 p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+            title="Volver atrás"
+          >
+            ← Volver
+          </button>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <Shield className="text-blue-600" />
             Dashboard de Administrador

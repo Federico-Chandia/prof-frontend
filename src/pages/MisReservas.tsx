@@ -147,6 +147,15 @@ const MisReservas: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+              title="Volver atrás"
+            >
+              ← Volver
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Mis Reservas</h1>

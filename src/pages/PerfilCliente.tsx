@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const PerfilCliente: React.FC = () => {
+  const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -110,6 +112,13 @@ const PerfilCliente: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-4 p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
+          title="Volver atrás"
+        >
+          ← Volver
+        </button>
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
