@@ -125,6 +125,8 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
     newSocket.on('disconnect', (reason: string) => {
       console.log('[ChatV2] Socket desconectado:', reason);
       setConnected(false);
+      // Resetear loading en caso de que estuviera enviando
+      setLoading(false);
     });
 
     setSocket(newSocket);
@@ -180,6 +182,13 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
 
     console.log('[ChatV2] Enviando mensaje:', messageText);
 
+    // Timeout de seguridad para evitar que el botón quede bloqueado
+    let timeoutId: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      console.warn('[ChatV2] Timeout: no se recibió ACK en 10 segundos');
+      setLoading(false);
+      setError('Tiempo de espera agotado. Intenta de nuevo.');
+    }, 10000);
+
     socket.emit(
       'sendMessage',
       {
@@ -189,6 +198,7 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
         tipo: 'texto',
       },
       (ack: any) => {
+        if (timeoutId) clearTimeout(timeoutId);
         setLoading(false);
         if (ack?.success) {
           console.log('[ChatV2] Mensaje enviado exitosamente (ack):', ack.message?._id);
@@ -365,7 +375,14 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
                     const resp = await api.post('/uploads/image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                     const url = resp.data?.url;
                     if (url && socket) {
+                      // Timeout de seguridad para el envío de imagen
+                      let timeoutId: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+                        console.warn('[ChatV2] Timeout: no se recibió ACK para imagen en 10 segundos');
+                        setError('Tiempo de espera agotado al enviar imagen. Intenta de nuevo.');
+                      }, 10000);
+
                       socket.emit('sendMessage', { reservaId, receptorId: otherUser.id, mensaje: url, tipo: 'imagen' }, (ack: any) => {
+                        if (timeoutId) clearTimeout(timeoutId);
                         if (ack?.success) {
                           const norm = normalizeMessage(ack.message);
                           setMessages((prev) => {
