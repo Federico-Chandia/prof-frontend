@@ -98,6 +98,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
+  // Verificar periódicamente si el rol o datos críticos han cambiado (ej: desde admin)
+  useEffect(() => {
+    if (!state.user || !state.token) return;
+
+    const checkTokenVersion = async () => {
+      try {
+        const response = await api.get('/auth/me');
+        const latestUser = response.data.user;
+        const currentTokenVersion = state.user?.tokenVersion || 0;
+        const latestTokenVersion = latestUser?.tokenVersion || 0;
+
+        // Si el tokenVersion cambió, actualizar el usuario
+        if (latestTokenVersion !== currentTokenVersion) {
+          console.log('[AuthContext] Token version cambió, actualizando usuario');
+          const normalizedUser = {
+            ...latestUser,
+            id: latestUser.id || latestUser._id || latestUser._id?.toString?.(),
+          };
+          dispatch({ type: 'UPDATE_USER', payload: normalizedUser });
+        }
+      } catch (error) {
+        // Silenciar errores en verificación periódica
+        console.debug('[AuthContext] Error verificando token version:', error);
+      }
+    };
+
+    // Ejecutar verificación cada 30 segundos
+    const interval = setInterval(checkTokenVersion, 30000);
+    return () => clearInterval(interval);
+  }, [state.user, state.token]);
+
   const login = async (email: string, password: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });

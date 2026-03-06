@@ -24,6 +24,7 @@ export interface User {
   };
   genero?: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
   preferenciaCliente?: 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres';
+  tokenVersion?: number;
 }
 
 export interface RegisterData {
