@@ -8,6 +8,10 @@ const NotificationDropdown: React.FC = () => {
   const getNotificationIcon = (tipo: string) => {
     switch (tipo) {
       case 'mensaje': return '💬';
+      case 'reserva': return '📋';
+      case 'solicitud': return '🔔';
+      case 'orden': return '✅';
+      case 'pago': return '💳';
       case 'reserva_aceptada': return '✅';
       case 'reserva_rechazada': return '❌';
       default: return '🔔';

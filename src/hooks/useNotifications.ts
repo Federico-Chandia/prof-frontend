@@ -39,10 +39,16 @@ export const useNotifications = () => {
         ...options
       });
 
-      // Auto-cerrar después de 5 segundos
-      setTimeout(() => {
-        notification.close();
-      }, 5000);
+      // Auto-cerrar después de 10 segundos si no tiene requireInteraction
+      if (!options?.requireInteraction) {
+        setTimeout(() => {
+          try {
+            notification.close();
+          } catch (e) {
+            // Ignorar si ya está cerrada
+          }
+        }, 10000);
+      }
 
       return notification;
     }

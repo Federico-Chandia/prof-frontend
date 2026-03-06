@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { Notification, NotificationContextType } from '../types/notification';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications as useBrowserNotifications } from '../hooks/useNotifications';
+import api from '../services/api';
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
@@ -20,22 +21,38 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { token, user } = useAuth();
   const browserNotifications = useBrowserNotifications();
 
-  // Cargar notificaciones del localStorage al iniciar
+  // Sincronizar notificaciones desde BD al iniciar sesión
   useEffect(() => {
-    const saved = localStorage.getItem('notifications');
-    if (saved) {
-      const parsed = JSON.parse(saved).map((n: any) => ({
-        ...n,
-        fechaCreacion: new Date(n.fechaCreacion)
-      }));
-      setNotifications(parsed);
-    }
-  }, []);
+    if (!token || !user) return;
 
-  // Guardar notificaciones en localStorage cuando cambien
-  useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
+    const syncNotificationsFromBackend = async () => {
+      try {
+        console.log('[NotificationContext] Sincronizando notificaciones desde BD');
+        const response = await api.get('/notifications?limit=100');
+        if (response.data?.data?.notifications) {
+          const backendNotifications = response.data.data.notifications.map((n: any) => ({
+            id: n._id,
+            tipo: n.tipo,
+            titulo: n.titulo,
+            mensaje: n.mensaje,
+            leida: n.leida,
+            fechaCreacion: n.fecha || n.createdAt,
+            reservaId: n.referencia?.reservaId,
+            chatId: n.referencia?.mensajeId,
+            url: n.url,
+            icon: n.icono,
+          } as Notification));
+          
+          setNotifications(backendNotifications);
+          console.log('[NotificationContext] Notificaciones sincronizadas:', backendNotifications.length);
+        }
+      } catch (err) {
+        console.warn('[NotificationContext] Error sincronizando notificaciones:', err);
+      }
+    };
+
+    syncNotificationsFromBackend();
+  }, [token, user]);
 
   // Conectar Socket.IO para recibir notificaciones en tiempo real
   useEffect(() => {
@@ -69,15 +86,15 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     socket.on('notify', (payload: any) => {
       try {
-        const tipoMap: any = { reserva: 'reserva_aceptada', orden: 'reserva_aceptada', solicitud: 'mensaje' };
-        const tipo = payload.data?.tipo && tipoMap[payload.data.tipo] ? tipoMap[payload.data.tipo] : 'mensaje';
+        // Usar type de la notificación desde el backend
+        const tipo = payload.data?.tipo || 'otro';
         const nueva = {
           tipo,
           titulo: payload.title || 'Notificación',
           mensaje: payload.body || '',
-          reservaId: payload.data?.id || undefined,
-          chatId: undefined,
-          url: payload.data?.url || payload.url || undefined,
+          reservaId: payload.data?.reference?.reservaId?.toString?.() || undefined,
+          chatId: payload.data?.reference?.mensajeId?.toString?.() || undefined,
+          url: payload.url || undefined,
           icon: payload.icon || undefined,
           actions: payload.actions || undefined
         } as Omit<Notification, 'id' | 'fechaCreacion' | 'leida'>;
@@ -111,6 +128,13 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           } catch (err) {
             console.warn('Error attaching notification handlers', err);
           }
+        }
+
+        // Guardar en BD para persistencia
+        try {
+          api.post('/notifications', { notification: nueva }).catch(e => console.debug('Error guardando notificación:', e));
+        } catch (err) {
+          console.debug('[NotificationContext] Error guardando notificación en BD:', err);
         }
       } catch (err) {
         console.warn('Error procesando notify:', err);
@@ -150,20 +174,28 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, leida: true } : n)
     );
+    // Actualizar en BD sin bloquear
+    api.patch(`/notifications/${id}/read`).catch(e => console.debug('Error marcando como leída:', e));
   };
 
   const markAllAsRead = () => {
     setNotifications(prev => 
       prev.map(n => ({ ...n, leida: true }))
     );
+    // Actualizar en BD sin bloquear
+    api.patch('/notifications/read-all').catch(e => console.debug('Error marcando todas como leídas:', e));
   };
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
+    // Eliminar en BD sin bloquear
+    api.delete(`/notifications/${id}`).catch(e => console.debug('Error eliminando notificación:', e));
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
+    // Eliminar todas en BD sin bloquear
+    api.delete('/notifications').catch(e => console.debug('Error eliminando todas las notificaciones:', e));
   };
 
   return (
