@@ -9,7 +9,7 @@ import ProfileProgress from '../components/ProfileProgress';
 import PricingBanner from '../components/PricingBanner';
 import ProfileChecklist from '../components/ProfileChecklist';
 import { useNotifications } from '../hooks/useNotifications';
-import CATEGORIAS from '../data/categorias';
+import CATEGORIAS_V2 from '../data/categoriasV2';
 
 // Subcomponente para manejar subcategorías dinámicas.
 type SubcategoryFieldProps = {
@@ -109,8 +109,9 @@ const MiPerfil: React.FC = () => {
     telefono: '',
     whatsappLaboral: '',
     // Servicios
-    tipoOficio: '',
-    otraCategoria: '', // texto libre cuando seleccionan "Otros"
+    categoria: '', // categoría principal (key de CATEGORIAS_V2)
+    subcategoria: '', // subcategoría (key dentro de la categoría)
+    especializacion: '', // texto personalizado solo con suscripción activa
     descripcion: '',
     experiencia: 0,
     disponibilidadHoraria: {
@@ -128,9 +129,6 @@ const MiPerfil: React.FC = () => {
     certificaciones: [] as string[],
     matricula: '',
     seguroResponsabilidad: false,
-    // Categorías: principal y subcategoria (subcategoria puede ser texto libre si no hay opciones)
-    categoriaPrincipal: '',
-    subcategoria: '',
     // Preferencias de género
     genero: 'prefiero_no_decir' as 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir',
     preferenciaProfesional: 'sin_preferencia' as 'sin_preferencia' | 'solo_mujeres' | 'solo_hombres'
@@ -280,17 +278,32 @@ const MiPerfil: React.FC = () => {
         
         setOficio(miOficio);
         setPortfolioFotos(miOficio.fotos || []);
-        // determine if the stored tipoOficio matches a known key
-        const isKnown = CATEGORIAS.some(c => c.key === miOficio.tipoOficio);
+        // mapear tipoOficio y profesionPersonalizada a la nueva estructura
+        // si vienen del backend antiguo como "tipoOficio", buscar en la estructura nueva
+        let catKey = '';
+        let subKey = '';
+        let especial = '';
+        
+        // buscar en CATEGORIAS_V2 si existe el tipoOficio como subcategoría
+        if (miOficio.tipoOficio) {
+          for (const cat of CATEGORIAS_V2) {
+            const found = cat.subcategorias.find(sub => sub.key === miOficio.tipoOficio);
+            if (found) {
+              catKey = cat.key;
+              subKey = found.key;
+              break;
+            }
+          }
+        }
+        
         setFormData({
           nombreCompleto: miOficio.usuario.nombre || '',
           fotoPerfil: miOficio.usuario.avatar || '',
           telefono: miOficio.usuario.telefono || '',
           whatsappLaboral: miOficio.whatsappLaboral || '',
-          tipoOficio: isKnown ? miOficio.tipoOficio : 'otros',
-          categoriaPrincipal: SLUG_TO_CATEGORY[miOficio.categoria] || miOficio.categoria || (miOficio.tipoOficio || ''),
-          subcategoria: miOficio.profesionPersonalizada || '',
-          otraCategoria: isKnown ? '' : miOficio.tipoOficio,
+          categoria: catKey,
+          subcategoria: subKey,
+          especializacion: miOficio.profesionPersonalizada || '',
           descripcion: miOficio.descripcion,
           experiencia: miOficio.experiencia,
           disponibilidadHoraria: miOficio.disponibilidadHoraria || formData.disponibilidadHoraria,
@@ -312,10 +325,6 @@ const MiPerfil: React.FC = () => {
           ...prev,
           nombreCompleto: user?.nombre || '',
           telefono: user?.telefono || ''
-        ,
-          categoriaPrincipal: prev.categoriaPrincipal || '',
-          subcategoria: prev.subcategoria || '',
-          otraCategoria: prev.otraCategoria || ''
         }));
       }
     } catch (error) {
@@ -427,23 +436,24 @@ const MiPerfil: React.FC = () => {
       setMessage({ type: 'error', text: 'Debe especificar una tarifa por hora válida' });
       return;
     }
-    if (formData.tipoOficio === 'otros' && !formData.otraCategoria.trim()) {
-      setMessage({ type: 'error', text: 'Por favor especificá el rubro si elegiste "Otros"' });
+    if (!formData.categoria || !formData.subcategoria) {
+      setMessage({ type: 'error', text: 'Debes seleccionar categoría y especialidad' });
       return;
     }
 
     // Construir payload seguro para el backend
     const payload: any = { ...formData };
 
-    // usar el oficio seleccionado por el profesional
-    // si elegió "otros" usamos el texto libre, de lo contrario el slug estándar
-    if (formData.tipoOficio === 'otros') {
-      payload.tipoOficio = formData.otraCategoria.trim() || 'otros';
-      payload.categoria = 'otros';
-    } else {
-      payload.tipoOficio = formData.tipoOficio;
-      // categoría general sigue siendo servicios-hogar para los rubros predefinidos
-      payload.categoria = 'servicios-hogar';
+    // Usar la categoría y subcategoría seleccionadas
+    // Nota: tipoOficio en el backend debería ser actualizado a categoria/subcategoria keys
+    const selectedCategoria = CATEGORIAS_V2.find(c => c.key === formData.categoria);
+    const selectedSubcategoria = selectedCategoria?.subcategorias.find(s => s.key === formData.subcategoria);
+    
+    if (selectedSubcategoria) {
+      // Para compatibilidad temporal con backend, usar subcategoria.key como tipoOficio
+      payload.tipoOficio = selectedSubcategoria.key;
+      payload.categoria = selectedCategoria.key;
+      payload.especializacion = formData.especializacion || '';
     }
 
     // Incluir fotos del portfolio en el payload
@@ -451,7 +461,6 @@ const MiPerfil: React.FC = () => {
 
     // Eliminar campos propios del frontend antes de enviar
     delete payload.categoriaPrincipal;
-    delete payload.subcategoria;
 
     // Limpiar campos vacíos
     const cleanData = { ...payload };
@@ -523,8 +532,6 @@ const MiPerfil: React.FC = () => {
         {/* Pricing Banner */}
         {user?.rol === 'profesional' && (
           <PricingBanner 
-            currentPlan={userTokens.plan}
-            tokensRemaining={userTokens.remaining}
             onUpgrade={handleUpgradePlan}
           />
         )}
@@ -612,23 +619,62 @@ const MiPerfil: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Nuevo campo para seleccionar el tipo de oficio/rubro */}
+                  {/* Selector de Categoría */}
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Rubro / Oficio
+                      Rubro / Categoría
                     </label>
                     <select
-                      value={formData.tipoOficio}
-                      onChange={(e) => setFormData({...formData, tipoOficio: e.target.value})}
+                      value={formData.categoria}
+                      onChange={(e) => {
+                        setFormData({...formData, categoria: e.target.value, subcategoria: ''});
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="">Seleccionar rubro</option>
-                      {CATEGORIAS.map(c => (
+                      <option value="">Seleccionar categoría</option>
+                      {CATEGORIAS_V2.map(c => (
                         <option key={c.key} value={c.key}>{c.label}</option>
                       ))}
-                      <option value="otros">Otros</option>
                     </select>
                   </div>
+                  
+                  {/* Selector de Subcategoría */}
+                  {formData.categoria && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Especialidad / Subcategoría
+                      </label>
+                      <select
+                        value={formData.subcategoria}
+                        onChange={(e) => setFormData({...formData, subcategoria: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Seleccionar especialidad</option>
+                        {CATEGORIAS_V2.find(c => c.key === formData.categoria)?.subcategorias.map(sub => (
+                          <option key={sub.key} value={sub.key}>{sub.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  
+                  {/* Campo de Especialización Personalizada (solo con suscripción) */}
+                  {formData.categoria && formData.subcategoria && userTokens.plan !== 'basico' && (
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Especialización Personalizada (Plan Premium)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.especializacion}
+                        onChange={(e) => setFormData({...formData, especializacion: e.target.value})}
+                        placeholder="Ej: Especialista en obras menores, Electricista en domótica"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">
+                        Agranda tu descripción con una especialización única que te diferencie
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -644,7 +690,18 @@ const MiPerfil: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900">{formData.nombreCompleto || user?.nombre}</h3>
-                      <p className="text-gray-600 capitalize">{oficio?.tipoOficio}</p>
+                      <p className="text-gray-600 text-sm">
+                        {(() => {
+                          if (!formData.categoria) return 'Sin categoría especificada';
+                          const cat = CATEGORIAS_V2.find(c => c.key === formData.categoria);
+                          const subcat = cat?.subcategorias.find(s => s.key === formData.subcategoria);
+                          if (!subcat) return cat?.label || formData.categoria;
+                          if (formData.especializacion) {
+                            return `${cat?.label} - ${subcat.label} | ${formData.especializacion}`;
+                          }
+                          return `${cat?.label} - ${subcat.label}`;
+                        })()}
+                      </p>
                     </div>
                   </div>
                   
