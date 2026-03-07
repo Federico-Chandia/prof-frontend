@@ -28,7 +28,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const syncNotificationsFromBackend = async () => {
       try {
         console.log('[NotificationContext] Sincronizando notificaciones desde BD');
-        const response = await api.get('/api/notifications?limit=100');
+        const response = await api.get('/notifications?limit=100');
         if (response.data?.data?.notifications) {
           const backendNotifications = response.data.data.notifications.map((n: any) => ({
             id: n._id,
@@ -132,7 +132,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
         // Guardar en BD para persistencia
         try {
-          api.post('/api/notifications', { notification: nueva }).catch(e => console.debug('Error guardando notificación:', e));
+          api.post('/notifications', { notification: nueva }).catch(e => console.debug('Error guardando notificación:', e));
         } catch (err) {
           console.debug('[NotificationContext] Error guardando notificación en BD:', err);
         }
@@ -175,7 +175,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       prev.map(n => n.id === id ? { ...n, leida: true } : n)
     );
     // Actualizar en BD sin bloquear
-    api.patch(`/api/notifications/${id}/read`).catch(e => console.debug('Error marcando como leída:', e));
+    api.patch(`/notifications/${id}/read`).catch(e => console.debug('Error marcando como leída:', e));
   };
 
   const markAllAsRead = () => {
@@ -183,19 +183,19 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       prev.map(n => ({ ...n, leida: true }))
     );
     // Actualizar en BD sin bloquear
-    api.patch('/api/notifications/read-all').catch(e => console.debug('Error marcando todas como leídas:', e));
+    api.patch('/notifications/read-all').catch(e => console.debug('Error marcando todas como leídas:', e));
   };
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
     // Eliminar en BD sin bloquear
-    api.delete(`/api/notifications/${id}`).catch(e => console.debug('Error eliminando notificación:', e));
+    api.delete(`/notifications/${id}`).catch(e => console.debug('Error eliminando notificación:', e));
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
     // Eliminar todas en BD sin bloquear
-    api.delete('/api/notifications').catch(e => console.debug('Error eliminando todas las notificaciones:', e));
+    api.delete('/notifications').catch(e => console.debug('Error eliminando todas las notificaciones:', e));
   };
 
   return (

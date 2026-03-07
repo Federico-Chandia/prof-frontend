@@ -31,6 +31,12 @@ export default defineConfig(({ mode }) => {
         changeOrigin: true,
         secure: false,
       },
+      '/notifications': {
+        target: env.VITE_API_URL || 'http://localhost:5003',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/notifications/, '/api/notifications'),
+      },
       '/auth': {
         target: env.VITE_API_URL || 'http://localhost:5003',
         changeOrigin: true,
