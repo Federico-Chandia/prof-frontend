@@ -244,16 +244,13 @@ const MisReservas: React.FC = () => {
                     const ahora = new Date();
                     return reservas
                       .filter(r => {
-                        if (r.estado !== 'completada') return false;
+                        if (r.estado !== 'completada' || !r.costos?.importeReal) return false;
                         const fecha = new Date(r.createdAt || r.updatedAt);
                         if (isNaN(fecha.getTime())) return false;
                         return fecha.getMonth() === ahora.getMonth() && 
                                fecha.getFullYear() === ahora.getFullYear();
                       })
-                      .reduce((sum, r) => {
-                        const monto = r.costos?.importeReal || r.costos?.total || 0;
-                        return sum + monto;
-                      }, 0)
+                      .reduce((sum, r) => sum + (r.costos?.importeReal || 0), 0)
                       .toLocaleString();
                   })()}
                 </p>
