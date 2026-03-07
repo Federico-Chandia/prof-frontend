@@ -26,8 +26,26 @@ const MisTrabajos: React.FC = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   useEffect(() => {
-    fetchReservas();
-    fetchStats();
+    const initializeComponent = async () => {
+      try {
+        console.log('[MisTrabajos] Obteniendo oficio ID...');
+        const oficiosResponse = await api.get('/oficios');
+        const miOficio = oficiosResponse.data?.oficios?.find((o: any) => o.usuario?.id === user?.id);
+        if (miOficio) {
+          console.log('[MisTrabajos] Oficio encontrado:', miOficio._id);
+          setOficioId(miOficio._id);
+          // Llamo a fetchReservasAndStats CON el oficioId
+          await fetchReservasAndStats(miOficio._id);
+        }
+      } catch (error) {
+        console.error('[MisTrabajos] Error obteniendo oficio ID:', error);
+        // Aun sin oficioId, intent fetch (pero sin stats de reviews)
+        await fetchReservasAndStats(null);
+      }
+    };
+
+    initializeComponent();
+    
     // Verificar e inicializar tokens si es necesario
     if (user?.rol === 'profesional' && (!user.tokens || user.tokens.disponibles === 0)) {
       inicializarTokens();
@@ -64,15 +82,23 @@ const MisTrabajos: React.FC = () => {
     };
   }, [showNotifications]);
 
-  const fetchReservas = async () => {
+  const fetchReservasAndStats = async (fetchedOficioId: string | null) => {
     try {
+      console.log('[MisTrabajos] Fetching reservas...');
       const response = await api.get('/reservas?tipo=profesional');
       const reservasData = response.data;
       
       // Validar que sea un array
-      const reservas = Array.isArray(reservasData) ? reservasData : [];
+      const reservasArray = Array.isArray(reservasData) ? reservasData : [];
+      console.log('[MisTrabajos] Reservas obtenidas:', {
+        count: reservasArray.length,
+        completadas: reservasArray.filter(r => r.estado === 'completada').length,
+        conImporteReal: reservasArray.filter(r => r.costos?.importeReal).length
+      });
 
-      setReservas(reservas);
+      setReservas(reservasArray);
+      // Recalcular estadísticas con los nuevos datos y oficioId
+      await recalcularEstadisticas(reservasArray, fetchedOficioId);
     } catch (error) {
       console.error('Error fetching reservas:', error);
       setReservas([]);
@@ -81,54 +107,64 @@ const MisTrabajos: React.FC = () => {
     }
   };
 
-  const fetchStats = async () => {
+  const recalcularEstadisticas = async (reservasArray: Reserva[], fetchedOficioId: string | null) => {
     try {
-      // Obtener ID del oficio del usuario
-      const oficiosResponse = await api.get('/oficios');
-      const miOficio = oficiosResponse.data?.oficios?.find((o: any) => o.usuario?.id === user?.id);
-      if (miOficio) {
-        setOficioId(miOficio._id);
-        await fetchEstadisticas(miOficio._id);
-      }
-    } catch (error) {
-      console.error('Error al obtener estadísticas');
-    }
-  };
-
-  const fetchEstadisticas = async (oficioId: string) => {
-    try {
-      // Obtener reservas (ya filtradas por el backend)
-      let reservas = [];
-      try {
-        const reservasRes = await api.get('/reservas?tipo=profesional');
-        reservas = reservasRes.data || [];
-      } catch (err) {
-        reservas = [];
-      }
+      console.log('[MisTrabajos] Recalculando estadísticas con oficioId:', fetchedOficioId);
       
+      if (!fetchedOficioId) {
+        console.warn('[MisTrabajos] No oficioId para obtener reviews');
+        // Calcular sin reviews
+        const trabajosCompletados = reservasArray.filter(r => r.estado === 'completada').length;
+        const ahora = new Date();
+        const ingresosMes = reservasArray
+          .filter(r => {
+            if (r.estado !== 'completada') return false;
+            const fecha = new Date(r.fechaHora || r.createdAt || r.updatedAt);
+            if (isNaN(fecha.getTime())) return false;
+            return fecha.getMonth() === ahora.getMonth() && 
+                   fecha.getFullYear() === ahora.getFullYear();
+          })
+          .reduce((total, r) => {
+            const monto = r.costos?.importeReal || r.costos?.subtotal || 0;
+            return total + monto;
+          }, 0);
+        
+        setStats({
+          totalTrabajos: trabajosCompletados,
+          ingresosMes: Math.round(ingresosMes),
+          ratingPromedio: 0
+        });
+        return;
+      }
+
       // Obtener reviews
       let reviews = [];
       try {
-        const reviewsRes = await api.get(`/reviews/oficio/${oficioId}`);
+        const reviewsRes = await api.get(`/reviews/oficio/${fetchedOficioId}`);
         reviews = reviewsRes.data.reviews || [];
       } catch (err) {
+        console.warn('[MisTrabajos] Error obteniendo reviews:', err);
         reviews = [];
       }
       
-      const trabajosCompletados = reservas.filter(r => r.estado === 'completada').length;
+      const trabajosCompletados = reservasArray.filter(r => r.estado === 'completada').length;
       const ahora = new Date();
-      const ingresosMes = reservas
+      const ingresosMes = reservasArray
         .filter(r => {
           if (r.estado !== 'completada') return false;
-          // Usar fechaHora si existe, sino createdAt
           const fecha = new Date(r.fechaHora || r.createdAt || r.updatedAt);
           if (isNaN(fecha.getTime())) return false;
           return fecha.getMonth() === ahora.getMonth() && 
                  fecha.getFullYear() === ahora.getFullYear();
         })
         .reduce((total, r) => {
-          // Usar importeReal si existe, sino subtotal
           const monto = r.costos?.importeReal || r.costos?.subtotal || 0;
+          console.log('[MisTrabajos] Trabajo completado:', {
+            id: r._id,
+            monto,
+            importeReal: r.costos?.importeReal,
+            subtotal: r.costos?.subtotal
+          });
           return total + monto;
         }, 0);
       
@@ -136,13 +172,19 @@ const MisTrabajos: React.FC = () => {
         ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
         : 0;
       
+      console.log('[MisTrabajos] Estadísticas calculadas:', {
+        totalTrabajos: trabajosCompletados,
+        ingresosMes,
+        ratingPromedio: Math.round(ratingPromedio * 10) / 10
+      });
+      
       setStats({
         totalTrabajos: trabajosCompletados,
         ingresosMes: Math.round(ingresosMes),
         ratingPromedio: Math.round(ratingPromedio * 10) / 10
       });
     } catch (error) {
-      console.error('Error fetching estadisticas:', error);
+      console.error('[MisTrabajos] Error recalculando estadísticas:', error);
     }
   };
 
@@ -175,8 +217,7 @@ const MisTrabajos: React.FC = () => {
       }
       
       // Actualizar la lista de reservas y estadísticas
-      await fetchReservas();
-      await fetchStats();
+      await fetchReservasAndStats(oficioId);
     } catch (error: any) {
       // Manejo específico de errores de tokens
       if (error?.message?.includes('tokens') || error?.response?.status === 403) {
@@ -197,8 +238,7 @@ const MisTrabajos: React.FC = () => {
         notasFinalizacion: notas
       });
       
-      fetchReservas();
-      fetchStats();
+      await fetchReservasAndStats(oficioId);
       setCompletarModal(null);
       setNotasFinalizacion('');
     } catch (error) {
