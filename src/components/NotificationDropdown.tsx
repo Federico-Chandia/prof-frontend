@@ -5,6 +5,9 @@ const NotificationDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, clearAllNotifications } = useNotifications();
 
+  console.log('[NotificationDropdown] notifications:', notifications);
+  console.log('[NotificationDropdown] unreadCount:', unreadCount);
+
   const getNotificationIcon = (tipo: string) => {
     switch (tipo) {
       case 'mensaje': return '💬';
