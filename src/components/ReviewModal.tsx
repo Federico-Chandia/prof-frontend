@@ -28,17 +28,27 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
       // Validar que tenemos el ID del profesional
       const profesionalId = reserva.oficio?._id || reserva.profesional?._id;
       if (!profesionalId) {
+        console.debug('No professional id found');
         setCheckingReview(false);
         return;
       }
 
       const response = await api.get(`/reviews/oficio/${profesionalId}`);
       const reviews = response.data.reviews || [];
-      const userReview = reviews.find((r: any) => r.reserva === reserva._id);
+      
+      // Comparar IDs como strings
+      const userReview = reviews.find((r: any) => {
+        const rReservaId = typeof r.reserva === 'object' ? r.reserva._id : r.reserva;
+        return rReservaId.toString() === reserva._id.toString();
+      });
+      
       if (userReview) {
+        console.debug('Found existing review:', userReview);
         setExistingReview(userReview);
         setRating(userReview.puntuacion);
         setComentario(userReview.comentario || '');
+      } else {
+        console.debug('No existing review found for this reservation');
       }
     } catch (error) {
       // No existing review found
@@ -74,14 +84,16 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
         comentario
       };
       
-      // Sending review data
+      console.log('[ReviewModal] Enviando reseña:', reviewData);
       const response = await api.post('/reviews', reviewData);
-      // Review created successfully
+      console.log('[ReviewModal] Reseña creada:', response.data);
       
+      // Mostrar mensaje de éxito
+      alert('¡Reseña enviada correctamente!');
       onSuccess();
       onClose();
     } catch (error: any) {
-      // Error creating review - check network connection
+      console.error('[ReviewModal] Error:', error);
       
       let errorMessage = 'Error al enviar la reseña';
       if (error.response?.data?.errors && error.response.data.errors.length > 0) {
@@ -90,7 +102,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
         errorMessage = error.response.data.message;
       }
       
-      console.error('Error submitting review:', error);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -113,6 +124,20 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {existingReview && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+              <p className="font-semibold mb-2">✅ Tu reseña ha sido enviada</p>
+              <div className="mb-3">
+                <p className="text-sm font-medium">Calificación: {rating} ⭐</p>
+              </div>
+              {comentario && (
+                <p className="text-sm italic">"{comentario}"</p>
+              )}
+            </div>
+          )}
+          
+          {!existingReview && (
+            <>
           <div>
             <label className="block text-sm font-medium mb-2">Calificación</label>
             <div className="flex gap-1">
@@ -163,11 +188,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
               {error}
             </div>
           )}
-
-          {existingReview && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-md text-sm">
-              ✅ Ya has enviado una reseña para este servicio
-            </div>
+            </>
           )}
 
           <div className="flex gap-3">

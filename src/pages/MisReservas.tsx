@@ -75,14 +75,18 @@ const MisReservas: React.FC = () => {
         return;
       }
       
-      await api.put(`/reservas/${reservaId}/confirmar`, { importeReal: importe });
+      const response = await api.put(`/reservas/${reservaId}/confirmar`, { importeReal: importe });
+      console.log('[confirmarTrabajo] Response:', response.data);
+      
       await fetchReservas();
       setConfirmModal(null);
       setImporteReal('');
       setActiveTab('historial');
       notifyConfirmacion(reservaId);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error confirmando trabajo:', error);
+      const errorMsg = error.response?.data?.message || 'Error al confirmar el trabajo';
+      alert(errorMsg);
     }
   };
 
@@ -390,17 +394,23 @@ const MisReservas: React.FC = () => {
                       </div>
                       
                       <div className="text-right">
-                        {reserva.estado === 'completada' && reserva.costos.importeReal && (
+                        {reserva.estado === 'completada' && (
                           <>
-                            <p className="text-lg font-semibold text-gray-900">
-                              ${reserva.costos.importeReal.toLocaleString()}
-                            </p>
-                            <button 
-                              onClick={() => setReviewOpen(reserva)}
-                              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              ⭐ Dejar Reseña
-                            </button>
+                            {reserva.costos?.importeReal ? (
+                              <>
+                                <p className="text-lg font-semibold text-gray-900">
+                                  ${reserva.costos.importeReal.toLocaleString()}
+                                </p>
+                                <button 
+                                  onClick={() => setReviewOpen(reserva)}
+                                  className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+                                >
+                                  ⭐ Dejar Reseña
+                                </button>
+                              </>
+                            ) : (
+                              <p className="text-sm text-gray-500">Pendiente de confirmación</p>
+                            )}
                           </>
                         )}
                       </div>
