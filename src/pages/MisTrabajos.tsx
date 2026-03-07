@@ -120,11 +120,17 @@ const MisTrabajos: React.FC = () => {
       const ingresosMes = reservas
         .filter(r => {
           if (r.estado !== 'completada') return false;
-          const fecha = new Date(r.fechaHora || r.createdAt);
+          // Usar fechaHora si existe, sino createdAt
+          const fecha = new Date(r.fechaHora || r.createdAt || r.updatedAt);
+          if (isNaN(fecha.getTime())) return false;
           return fecha.getMonth() === ahora.getMonth() && 
                  fecha.getFullYear() === ahora.getFullYear();
         })
-        .reduce((total, r) => total + (r.costos?.importeReal || r.costos?.subtotal || 0), 0);
+        .reduce((total, r) => {
+          // Usar importeReal si existe, sino subtotal
+          const monto = r.costos?.importeReal || r.costos?.subtotal || 0;
+          return total + monto;
+        }, 0);
       
       const ratingPromedio = reviews.length > 0 
         ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 

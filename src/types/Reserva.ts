@@ -28,6 +28,9 @@ export interface Reserva {
   costos: {
     subtotal: number;
     total: number;
+    importeReal?: number;
+    cargoTraslado?: number;
+    distancia?: number;
   };
   pago: {
     estado: 'pendiente' | 'pagado' | 'reembolsado';

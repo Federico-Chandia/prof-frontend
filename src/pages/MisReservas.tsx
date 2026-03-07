@@ -76,9 +76,10 @@ const MisReservas: React.FC = () => {
       }
       
       await api.put(`/reservas/${reservaId}/confirmar`, { importeReal: importe });
-      fetchReservas();
+      await fetchReservas();
       setConfirmModal(null);
       setImporteReal('');
+      setActiveTab('historial');
       notifyConfirmacion(reservaId);
     } catch (error) {
       console.error('Error confirmando trabajo:', error);
@@ -241,10 +242,14 @@ const MisReservas: React.FC = () => {
                       .filter(r => {
                         if (r.estado !== 'completada') return false;
                         const fecha = new Date(r.createdAt || r.updatedAt);
+                        if (isNaN(fecha.getTime())) return false;
                         return fecha.getMonth() === ahora.getMonth() && 
                                fecha.getFullYear() === ahora.getFullYear();
                       })
-                      .reduce((sum, r) => sum + (r.costos?.importeReal || r.costos?.total || 0), 0)
+                      .reduce((sum, r) => {
+                        const monto = r.costos?.importeReal || r.costos?.total || 0;
+                        return sum + monto;
+                      }, 0)
                       .toLocaleString();
                   })()}
                 </p>
