@@ -148,13 +148,6 @@ const MisReservas: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
-              title="Volver atrás"
-            >
-              ← Volver
-            </button>
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -242,7 +235,18 @@ const MisReservas: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Gastado este Mes</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${reservas.filter(r => r.estado === 'completada').reduce((sum, r) => sum + r.costos.total, 0).toLocaleString()}
+                  ${(() => {
+                    const ahora = new Date();
+                    return reservas
+                      .filter(r => {
+                        if (r.estado !== 'completada') return false;
+                        const fecha = new Date(r.createdAt || r.updatedAt);
+                        return fecha.getMonth() === ahora.getMonth() && 
+                               fecha.getFullYear() === ahora.getFullYear();
+                      })
+                      .reduce((sum, r) => sum + (r.costos?.importeReal || r.costos?.total || 0), 0)
+                      .toLocaleString();
+                  })()}
                 </p>
               </div>
             </div>

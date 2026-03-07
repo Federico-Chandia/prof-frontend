@@ -120,11 +120,11 @@ const MisTrabajos: React.FC = () => {
       const ingresosMes = reservas
         .filter(r => {
           if (r.estado !== 'completada') return false;
-          const fecha = new Date(r.fechaHora);
+          const fecha = new Date(r.fechaHora || r.createdAt);
           return fecha.getMonth() === ahora.getMonth() && 
                  fecha.getFullYear() === ahora.getFullYear();
         })
-        .reduce((total, r) => total + (r.costos?.subtotal || 0), 0);
+        .reduce((total, r) => total + (r.costos?.importeReal || r.costos?.subtotal || 0), 0);
       
       const ratingPromedio = reviews.length > 0 
         ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
@@ -276,14 +276,7 @@ const MisTrabajos: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-700"
-                title="Volver atrás"
-              >
-                ← Volver
-              </button>
+            <div className="flex items-center gap-4">              
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Mis Trabajos</h1>
                 <p className="text-gray-600 mt-2">Gestiona tus reservas y revisa tu historial</p>

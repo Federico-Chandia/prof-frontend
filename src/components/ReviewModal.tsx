@@ -25,7 +25,14 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
 
   const checkExistingReview = async () => {
     try {
-      const response = await api.get(`/reviews/oficio/${reserva.oficio._id}`);
+      // Validar que tenemos el ID del profesional
+      const profesionalId = reserva.oficio?._id || reserva.profesional?._id;
+      if (!profesionalId) {
+        setCheckingReview(false);
+        return;
+      }
+
+      const response = await api.get(`/reviews/oficio/${profesionalId}`);
       const reviews = response.data.reviews || [];
       const userReview = reviews.find((r: any) => r.reserva === reserva._id);
       if (userReview) {
@@ -35,6 +42,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
       }
     } catch (error) {
       // No existing review found
+      console.debug('Error checking existing review:', error);
     } finally {
       setCheckingReview(false);
     }
@@ -62,7 +70,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
     try {
       const reviewData = {
         reserva: reserva._id,
-        oficio: reserva.oficio._id,
         puntuacion: rating,
         comentario
       };
@@ -83,6 +90,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
         errorMessage = error.response.data.message;
       }
       
+      console.error('Error submitting review:', error);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -98,7 +106,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ reserva, isOpen, onClose, onS
         </div>
 
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <p className="font-semibold">{reserva.oficio.usuario.nombre}</p>
+          <p className="font-semibold">
+            {reserva.oficio?.usuario?.nombre || reserva.profesional?.usuario?.nombre || 'Profesional'}
+          </p>
           <p className="text-sm text-gray-600">{reserva.descripcionTrabajo}</p>
         </div>
 
