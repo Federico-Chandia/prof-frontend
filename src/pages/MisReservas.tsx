@@ -26,10 +26,25 @@ const MisReservas: React.FC = () => {
 
   const fetchReservas = async () => {
     try {
-      const response = await api.get('/api/reservas?tipo=cliente');
+      console.log('[MisReservas] Fetchando reservas para cliente...');
+      const response = await api.get('/reservas?tipo=cliente');
+      
+      console.log('[MisReservas] Response:', {
+        status: response.status,
+        type: typeof response.data,
+        isArray: Array.isArray(response.data),
+        length: Array.isArray(response.data) ? response.data.length : 'N/A',
+        data: response.data
+      });
+      
       setReservas(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error('Error fetching reservas:', error);
+      console.log('[MisReservas] Reservas seteadas');
+    } catch (error: any) {
+      console.error('[MisReservas] Error fetching reservas:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
       setReservas([]);
     } finally {
       setLoading(false);
