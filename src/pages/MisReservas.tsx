@@ -20,6 +20,17 @@ const MisReservas: React.FC = () => {
   const [importeReal, setImporteReal] = useState('');
   const { addNotification } = useNotifications();
 
+  const formatearMonto = (valor: string) => {
+    const numeros = valor.replace(/\D/g, '');
+    if (!numeros) return '';
+    return Number(numeros).toLocaleString('es-AR');
+  };
+
+  const handleImporteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value.replace(/\D/g, '');
+    setImporteReal(valor);
+  };
+
   useEffect(() => {
     fetchReservas();
   }, []);
@@ -473,17 +484,18 @@ const MisReservas: React.FC = () => {
                     </p>
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Importe cobrado ($)
+                        Importe cobrado
                       </label>
-                      <input
-                        type="number"
-                        value={importeReal}
-                        onChange={(e) => setImporteReal(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md"
-                        placeholder="Ej: 5000"
-                        min="0"
-                        step="0.01"
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-3 text-gray-500 text-lg">$</span>
+                        <input
+                          type="text"
+                          value={formatearMonto(importeReal)}
+                          onChange={handleImporteChange}
+                          className="w-full p-3 pl-8 border border-gray-300 rounded-md text-lg"
+                          placeholder="5.000"
+                        />
+                      </div>
                     </div>
                     <p className="text-sm text-gray-500 mb-4">
                       Este importe se usará para las estadísticas y comisiones de la plataforma.
