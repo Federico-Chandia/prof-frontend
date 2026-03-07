@@ -26,31 +26,88 @@ const MisTrabajos: React.FC = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   useEffect(() => {
+    console.log('[MisTrabajos] useEffect ejecutándose, user:', user ? { id: user.id, rol: user.rol } : 'undefined');
+    
+    // No ejecutar si user aún no está disponible
+    if (!user || !user.id) {
+      console.log('[MisTrabajos] User no disponible (null/undefined o sin id), seteando loading a false');
+      setLoading(false);
+      return;
+    }
+
+    console.log('[MisTrabajos] User disponible, iniciando setupComponent');
+
     const initializeComponent = async () => {
+      setLoading(true);
+      console.log('[MisTrabajos] initializeComponent: seteando loading a true');
+      
       try {
-        console.log('[MisTrabajos] Obteniendo oficio ID...');
+        console.log('[MisTrabajos] initializeComponent iniciando con user:', { id: user.id, rol: user.rol });
+        
+        // Obtener oficios
+        console.log('[MisTrabajos] initializeComponent: Llamando a GET /oficios...');
         const oficiosResponse = await api.get('/oficios');
-        const miOficio = oficiosResponse.data?.oficios?.find((o: any) => o.usuario?.id === user?.id);
+        console.log('[MisTrabajos] initializeComponent: Oficios respuesta recibida:', {
+          status: oficiosResponse.status,
+          hasOficios: !!oficiosResponse.data?.oficios,
+          count: oficiosResponse.data?.oficios?.length || 0
+        });
+        
+        const oficios = oficiosResponse.data?.oficios || [];
+        console.log('[MisTrabajos] initializeComponent: Buscando oficio para user:', user.id);
+        
+        const miOficio = oficios.find((o: any) => {
+          const oficioUserId = o.usuario?.id;
+          const match = oficioUserId === user.id;
+          if (!match) {
+            console.log('[MisTrabajos] initializeComponent: Comparación de oficio:', {
+              oficioId: o._id,
+              oficioUserId,
+              userId: user.id,
+              match
+            });
+          }
+          return match;
+        });
+        
         if (miOficio) {
-          console.log('[MisTrabajos] Oficio encontrado:', miOficio._id);
+          console.log('[MisTrabajos] initializeComponent: ✓ Oficio encontrado:', miOficio._id);
           setOficioId(miOficio._id);
-          // Llamo a fetchReservasAndStats CON el oficioId
+          console.log('[MisTrabajos] initializeComponent: Llamando a fetchReservasAndStats con oficioId:', miOficio._id);
           await fetchReservasAndStats(miOficio._id);
+        } else {
+          console.warn('[MisTrabajos] initializeComponent: ✗ No se encontró oficio para el usuario');
+          console.log('[MisTrabajos] initializeComponent: Llamando a fetchReservasAndStats sin oficioId');
+          await fetchReservasAndStats(null);
         }
-      } catch (error) {
-        console.error('[MisTrabajos] Error obteniendo oficio ID:', error);
-        // Aun sin oficioId, intent fetch (pero sin stats de reviews)
-        await fetchReservasAndStats(null);
+      } catch (error: any) {
+        console.error('[MisTrabajos] initializeComponent: Error en try block:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText
+        });
+        // Intentar fetch sin oficio ID como fallback
+        console.log('[MisTrabajos] initializeComponent: Fallback - Llamando a fetchReservasAndStats sin oficioId');
+        try {
+          await fetchReservasAndStats(null);
+        } catch (fallbackError: any) {
+          console.error('[MisTrabajos] initializeComponent: Fallback también falló:', fallbackError.message);
+          setLoading(false);
+        }
       }
     };
 
     initializeComponent();
     
     // Verificar e inicializar tokens si es necesario
+    console.log('[MisTrabajos] Verificando tokens...');
     if (user?.rol === 'profesional' && (!user.tokens || user.tokens.disponibles === 0)) {
+      console.log('[MisTrabajos] Inicializando tokens');
       inicializarTokens();
+    } else {
+      console.log('[MisTrabajos] Tokens OK o no es profesional');
     }
-  }, []);
+  }, [user]);
   
   const inicializarTokens = async () => {
     try {
@@ -84,35 +141,65 @@ const MisTrabajos: React.FC = () => {
 
   const fetchReservasAndStats = async (fetchedOficioId: string | null) => {
     try {
-      console.log('[MisTrabajos] Fetching reservas...');
-      const response = await api.get('/reservas?tipo=profesional');
-      const reservasData = response.data;
+      console.log('[MisTrabajos] fetchReservasAndStats iniciado con oficioId:', fetchedOficioId);
       
-      // Validar que sea un array
-      const reservasArray = Array.isArray(reservasData) ? reservasData : [];
-      console.log('[MisTrabajos] Reservas obtenidas:', {
-        count: reservasArray.length,
-        completadas: reservasArray.filter(r => r.estado === 'completada').length,
-        conImporteReal: reservasArray.filter(r => r.costos?.importeReal).length
-      });
+      // Timeout de seguridad: si tarda más de 15s, forzar salida
+      const timeoutId = setTimeout(() => {
+        console.error('[MisTrabajos] TIMEOUT: Operación tardó más de 15s, forzando salida de loading');
+        setLoading(false);
+      }, 15000);
 
-      setReservas(reservasArray);
-      // Recalcular estadísticas con los nuevos datos y oficioId
-      await recalcularEstadisticas(reservasArray, fetchedOficioId);
-    } catch (error) {
-      console.error('Error fetching reservas:', error);
+      try {
+        console.log('[MisTrabajos] Llamando a /reservas?tipo=profesional...');
+        const response = await api.get('/reservas?tipo=profesional');
+        
+        console.log('[MisTrabajos] Response de reservas recibido:', { 
+          type: typeof response.data,
+          isArray: Array.isArray(response.data),
+          status: response.status
+        });
+        
+        const reservasData = response.data;
+        
+        // Validar que sea un array
+        const reservasArray = Array.isArray(reservasData) ? reservasData : [];
+        console.log('[MisTrabajos] Reservas procesadas:', {
+          count: reservasArray.length,
+          completadas: reservasArray.filter(r => r.estado === 'completada').length,
+          conImporteReal: reservasArray.filter(r => r.costos?.importeReal).length
+        });
+
+        setReservas(reservasArray);
+        console.log('[MisTrabajos] setReservas completado');
+        
+        // Recalcular estadísticas con los nuevos datos y oficioId
+        console.log('[MisTrabajos] Llamando a recalcularEstadisticas...');
+        await recalcularEstadisticas(reservasArray, fetchedOficioId);
+        console.log('[MisTrabajos] recalcularEstadisticas completado');
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    } catch (error: any) {
+      console.error('[MisTrabajos] Error en fetchReservasAndStats:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+      console.log('[MisTrabajos] Seteando reservas array vacío');
       setReservas([]);
     } finally {
+      console.log('[MisTrabajos] Finalmente: seteando loading a false');
       setLoading(false);
     }
   };
 
   const recalcularEstadisticas = async (reservasArray: Reserva[], fetchedOficioId: string | null) => {
     try {
-      console.log('[MisTrabajos] Recalculando estadísticas con oficioId:', fetchedOficioId);
+      console.log('[MisTrabajos] Iniciando recalcularEstadisticas con oficioId:', fetchedOficioId);
       
       if (!fetchedOficioId) {
-        console.warn('[MisTrabajos] No oficioId para obtener reviews');
+        console.warn('[MisTrabajos] No oficioId para obtener reviews, calculando sin reviews');
         // Calcular sin reviews
         const trabajosCompletados = reservasArray.filter(r => r.estado === 'completada').length;
         const ahora = new Date();
@@ -129,21 +216,28 @@ const MisTrabajos: React.FC = () => {
             return total + monto;
           }, 0);
         
+        console.log('[MisTrabajos] Stats sin reviews calculadas:', { trabajosCompletados, ingresosMes });
         setStats({
           totalTrabajos: trabajosCompletados,
           ingresosMes: Math.round(ingresosMes),
           ratingPromedio: 0
         });
+        console.log('[MisTrabajos] setStats completado');
         return;
       }
 
       // Obtener reviews
+      console.log('[MisTrabajos] Obteniendo reviews para oficio:', fetchedOficioId);
       let reviews = [];
       try {
         const reviewsRes = await api.get(`/reviews/oficio/${fetchedOficioId}`);
         reviews = reviewsRes.data.reviews || [];
-      } catch (err) {
-        console.warn('[MisTrabajos] Error obteniendo reviews:', err);
+        console.log('[MisTrabajos] Reviews obtenidas:', reviews.length);
+      } catch (err: any) {
+        console.warn('[MisTrabajos] Error obteniendo reviews:', {
+          message: err.message,
+          status: err.response?.status
+        });
         reviews = [];
       }
       
@@ -172,7 +266,7 @@ const MisTrabajos: React.FC = () => {
         ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
         : 0;
       
-      console.log('[MisTrabajos] Estadísticas calculadas:', {
+      console.log('[MisTrabajos] Stats con reviews calculadas:', {
         totalTrabajos: trabajosCompletados,
         ingresosMes,
         ratingPromedio: Math.round(ratingPromedio * 10) / 10
@@ -183,8 +277,18 @@ const MisTrabajos: React.FC = () => {
         ingresosMes: Math.round(ingresosMes),
         ratingPromedio: Math.round(ratingPromedio * 10) / 10
       });
-    } catch (error) {
-      console.error('[MisTrabajos] Error recalculando estadísticas:', error);
+      console.log('[MisTrabajos] setStats completado con reviews');
+    } catch (error: any) {
+      console.error('[MisTrabajos] Error recalculando estadísticas:', {
+        message: error.message,
+        stack: error.stack
+      });
+      // No relanzar, solo calcular valores por defecto
+      setStats({
+        totalTrabajos: 0,
+        ingresosMes: 0,
+        ratingPromedio: 0
+      });
     }
   };
 

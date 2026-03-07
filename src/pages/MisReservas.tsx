@@ -26,20 +26,23 @@ const MisReservas: React.FC = () => {
 
   const fetchReservas = async () => {
     try {
-      const response = await api.get('/reservas?tipo=cliente');
-      setReservas(response.data || []);
+      const response = await api.get('/api/reservas?tipo=cliente');
+      setReservas(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching reservas:', error);
+      setReservas([]);
     } finally {
       setLoading(false);
     }
   };
 
   const getReservasActivas = () => {
+    if (!Array.isArray(reservas)) return [];
     return reservas.filter(r => ['orden_generada', 'en_progreso', 'pendiente_confirmacion'].includes(r.estado));
   };
 
   const getHistorial = () => {
+    if (!Array.isArray(reservas)) return [];
     return reservas.filter(r => ['completada', 'cancelada'].includes(r.estado));
   };
 
@@ -214,7 +217,7 @@ const MisReservas: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Completadas</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {reservas.filter(r => r.estado === 'completada').length}
+                  {Array.isArray(reservas) ? reservas.filter(r => r.estado === 'completada').length : 0}
                 </p>
               </div>
             </div>
@@ -241,17 +244,16 @@ const MisReservas: React.FC = () => {
                 <p className="text-sm text-gray-600">Gastado este Mes</p>
                 <p className="text-2xl font-bold text-gray-900">
                   ${(() => {
+                    if (!Array.isArray(reservas)) return '0';
                     const ahora = new Date();
-                    return reservas
-                      .filter(r => {
-                        if (r.estado !== 'completada' || !r.costos?.importeReal) return false;
-                        const fecha = new Date(r.createdAt || r.updatedAt);
-                        if (isNaN(fecha.getTime())) return false;
-                        return fecha.getMonth() === ahora.getMonth() && 
-                               fecha.getFullYear() === ahora.getFullYear();
-                      })
-                      .reduce((sum, r) => sum + (r.costos?.importeReal || 0), 0)
-                      .toLocaleString();
+                    const completadas = reservas.filter(r => {
+                      if (r.estado !== 'completada') return false;
+                      const fecha = new Date(r.createdAt || r.updatedAt);
+                      if (isNaN(fecha.getTime())) return false;
+                      return fecha.getMonth() === ahora.getMonth() && 
+                             fecha.getFullYear() === ahora.getFullYear();
+                    });
+                    return completadas.reduce((sum, r) => sum + (r.costos?.importeReal || 0), 0).toLocaleString();
                   })()}
                 </p>
               </div>
