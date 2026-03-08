@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
 import { Reserva } from '../types';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 import DisponibilidadToggle from '../components/DisponibilidadToggle';
 import ChatModalV2 from '../components/ChatModalV2';
 
@@ -19,12 +19,12 @@ const MisTrabajos: React.FC = () => {
   const [chatOpen, setChatOpen] = useState<{reservaId: string, otherUser: {id: string, name: string}} | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const oficioIdRef = useRef<string | null>(null);
-  const socketRef = useRef<Socket | null>(null);
   const [completarModal, setCompletarModal] = useState<{reserva: Reserva} | null>(null);
   const [notasFinalizacion, setNotasFinalizacion] = useState('');
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { onDataUpdated } = useAutoRefresh();
 
   useEffect(() => {
     if (!user || !user.id) {
@@ -65,39 +65,15 @@ const MisTrabajos: React.FC = () => {
     }
   }, [user]);
   
-  // Socket.IO para actualizaciones en tiempo real
+  // Auto-refresco de reservas cuando hay cambios en tiempo real
   useEffect(() => {
-    const { token } = useAuth.getState?.() || {};
-    if (!token || !user) return;
-
-    const socketUrl = import.meta.env.DEV ? window.location.origin : (import.meta.env.VITE_SOCKET_URL || window.location.origin);
+    const unsubscribe = onDataUpdated('reservas', async () => {
+      console.log('[MisTrabajos] Reservas actualizadas, refrescando...');
+      await fetchReservasAndStats(oficioIdRef.current);
+    });
     
-    const socket = io(socketUrl, {
-      auth: { token },
-      transports: ['websocket', 'polling']
-    });
-    socketRef.current = socket;
-
-    socket.on('connect', () => {
-      console.log('[MisTrabajos] Socket conectado');
-    });
-
-    // Escuchar eventos de reservas
-    socket.on('reservaActualizada', () => {
-      console.log('[MisTrabajos] Reserva actualizada, recargando...');
-      fetchReservasAndStats(oficioIdRef.current);
-    });
-
-    socket.on('nuevaReserva', () => {
-      console.log('[MisTrabajos] Nueva reserva, recargando...');
-      fetchReservasAndStats(oficioIdRef.current);
-    });
-
-    return () => {
-      socket.disconnect();
-      socketRef.current = null;
-    };
-  }, [user]);
+    return unsubscribe;
+  }, [onDataUpdated]);
   
   const inicializarTokens = async () => {
     try {
