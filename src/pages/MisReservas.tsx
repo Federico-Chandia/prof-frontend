@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { io, Socket } from 'socket.io-client';
 import { Reserva } from '../types';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
 
 import ChatModalV2 from '../components/ChatModalV2';
@@ -18,7 +20,9 @@ const MisReservas: React.FC = () => {
   const [confirmModal, setConfirmModal] = useState<{type: 'confirmar' | 'corregir' | 'cancelar', reserva: Reserva} | null>(null);
   const [correctionText, setCorrectionText] = useState('');
   const [importeReal, setImporteReal] = useState('');
+  const socketRef = useRef<Socket | null>(null);
   const { addNotification } = useNotifications();
+  const { token, user } = useAuth();
 
   const formatearMonto = (valor: string) => {
     const numeros = valor.replace(/\D/g, '');
@@ -34,6 +38,38 @@ const MisReservas: React.FC = () => {
   useEffect(() => {
     fetchReservas();
   }, []);
+
+  // Socket.IO para actualizaciones en tiempo real
+  useEffect(() => {
+    if (!token || !user) return;
+
+    const socketUrl = import.meta.env.DEV ? window.location.origin : (import.meta.env.VITE_SOCKET_URL || window.location.origin);
+    
+    const socket = io(socketUrl, {
+      auth: { token },
+      transports: ['websocket', 'polling']
+    });
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('[MisReservas] Socket conectado');
+    });
+
+    socket.on('reservaActualizada', () => {
+      console.log('[MisReservas] Reserva actualizada, recargando...');
+      fetchReservas();
+    });
+
+    socket.on('nuevaReserva', () => {
+      console.log('[MisReservas] Nueva reserva, recargando...');
+      fetchReservas();
+    });
+
+    return () => {
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [token, user]);
 
   const fetchReservas = async () => {
     try {

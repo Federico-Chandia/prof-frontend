@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { io, Socket } from 'socket.io-client';
 import { Reserva } from '../types';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +19,7 @@ const MisTrabajos: React.FC = () => {
   const [chatOpen, setChatOpen] = useState<{reservaId: string, otherUser: {id: string, name: string}} | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const oficioIdRef = useRef<string | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [completarModal, setCompletarModal] = useState<{reserva: Reserva} | null>(null);
   const [notasFinalizacion, setNotasFinalizacion] = useState('');
   const navigate = useNavigate();
@@ -61,6 +63,40 @@ const MisTrabajos: React.FC = () => {
     if (user?.rol === 'profesional' && (!user.tokens || user.tokens.disponibles === 0)) {
       inicializarTokens();
     }
+  }, [user]);
+  
+  // Socket.IO para actualizaciones en tiempo real
+  useEffect(() => {
+    const { token } = useAuth.getState?.() || {};
+    if (!token || !user) return;
+
+    const socketUrl = import.meta.env.DEV ? window.location.origin : (import.meta.env.VITE_SOCKET_URL || window.location.origin);
+    
+    const socket = io(socketUrl, {
+      auth: { token },
+      transports: ['websocket', 'polling']
+    });
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('[MisTrabajos] Socket conectado');
+    });
+
+    // Escuchar eventos de reservas
+    socket.on('reservaActualizada', () => {
+      console.log('[MisTrabajos] Reserva actualizada, recargando...');
+      fetchReservasAndStats(oficioIdRef.current);
+    });
+
+    socket.on('nuevaReserva', () => {
+      console.log('[MisTrabajos] Nueva reserva, recargando...');
+      fetchReservasAndStats(oficioIdRef.current);
+    });
+
+    return () => {
+      socket.disconnect();
+      socketRef.current = null;
+    };
   }, [user]);
   
   const inicializarTokens = async () => {
