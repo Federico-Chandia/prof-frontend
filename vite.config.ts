@@ -58,17 +58,35 @@ export default defineConfig(({ mode }) => {
       compress: {
         drop_console: true,
         drop_debugger: true,
+        passes: 2,
+        pure_funcs: ['console.log', 'console.info'],
+      },
+      mangle: {
+        safari10: true,
       },
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          axios: ['axios', 'socket.io-client'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            if (id.includes('socket.io')) {
+              return 'socket';
+            }
+            if (id.includes('axios')) {
+              return 'axios';
+            }
+            return 'vendor';
+          }
         },
       },
     },
+    chunkSizeWarningLimit: 600,
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'axios', 'socket.io-client'],

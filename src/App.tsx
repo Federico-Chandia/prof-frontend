@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/AuthContext';
@@ -9,26 +9,34 @@ import Footer from './components/Layout/Footer';
 import ToastContainer from './components/ToastContainer';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import EmailConfirmed from './pages/EmailConfirmed';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Oficios from './pages/Oficios';
-import MisTrabajos from './pages/MisTrabajos';
-import MiPerfil from './pages/MiPerfil';
-import MisReservas from './pages/MisReservas';
-import DetalleOficio from './pages/DetalleOficio';
-import PerfilCliente from './pages/PerfilCliente';
-import AdminDashboard from './pages/AdminDashboard';
-import SocketTest from './pages/SocketTest';
-import DebugDashboard from './pages/DebugDashboard';
-import LandingProfesional from './pages/LandingProfesional';
-import SuscripcionExito from './pages/SuscripcionExito';
-import SuscripcionError from './pages/SuscripcionError';
-import SuscripcionPendiente from './pages/SuscripcionPendiente';
-import ComprarSuscripcion from './components/ComprarSuscripcion';
+
+// Lazy load de páginas
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const EmailConfirmed = lazy(() => import('./pages/EmailConfirmed'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const Oficios = lazy(() => import('./pages/Oficios'));
+const MisTrabajos = lazy(() => import('./pages/MisTrabajos'));
+const MiPerfil = lazy(() => import('./pages/MiPerfil'));
+const MisReservas = lazy(() => import('./pages/MisReservas'));
+const DetalleOficio = lazy(() => import('./pages/DetalleOficio'));
+const PerfilCliente = lazy(() => import('./pages/PerfilCliente'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const SocketTest = lazy(() => import('./pages/SocketTest'));
+const DebugDashboard = lazy(() => import('./pages/DebugDashboard'));
+const LandingProfesional = lazy(() => import('./pages/LandingProfesional'));
+const SuscripcionExito = lazy(() => import('./pages/SuscripcionExito'));
+const SuscripcionError = lazy(() => import('./pages/SuscripcionError'));
+const SuscripcionPendiente = lazy(() => import('./pages/SuscripcionPendiente'));
+const ComprarSuscripcion = lazy(() => import('./components/ComprarSuscripcion'));
+
+const LoadingFallback = () => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 // Componente para redirección automática según rol
 const RoleBasedRedirect: React.FC = () => {
@@ -73,6 +81,7 @@ function App() {
             <Header />
             <ToastContainer />
             <main className="pb-4 md:pb-0">
+              <Suspense fallback={<LoadingFallback />}>
               <Routes>
               {/* Ruta principal con redirección automática */}
               <Route path="/" element={<RoleBasedRedirect />} />
@@ -147,6 +156,7 @@ function App() {
                 } 
               />
               </Routes>
+              </Suspense>
             </main>
             <Footer />
           </div>
