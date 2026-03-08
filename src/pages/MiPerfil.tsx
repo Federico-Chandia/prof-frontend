@@ -553,7 +553,7 @@ const MiPerfil: React.FC = () => {
           </div>
           <button
             onClick={() => setEditMode(!editMode)}
-            className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 whitespace-nowrap"
+            className="bg-orange-600 items-center text-white px-4 py-2 rounded-md hover:bg-blue-700 whitespace-nowrap"
           >
             {editMode ? 'Cancelar' : 'Editar Perfil'}
           </button>

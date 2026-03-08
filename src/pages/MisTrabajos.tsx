@@ -4,7 +4,7 @@ import { Reserva } from '../types';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
-import CalendarioSemanal from '../components/CalendarioSemanal';
+import DisponibilidadToggle from '../components/DisponibilidadToggle';
 import ChatModalV2 from '../components/ChatModalV2';
 
 const MisTrabajos: React.FC = () => {
@@ -15,7 +15,6 @@ const MisTrabajos: React.FC = () => {
     ingresosMes: 0,
     ratingPromedio: 0
   });
-  const [showCalendar, setShowCalendar] = useState(false);
   const [chatOpen, setChatOpen] = useState<{reservaId: string, otherUser: {id: string, name: string}} | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const oficioIdRef = useRef<string | null>(null);
@@ -135,35 +134,6 @@ const MisTrabajos: React.FC = () => {
 
   const recalcularEstadisticas = async (reservasArray: Reserva[], fetchedOficioId: string | null) => {
     try {
-      if (!fetchedOficioId) {
-        const trabajosCompletados = reservasArray.filter(r => r.estado === 'completada').length;
-        const ahora = new Date();
-        const ingresosMes = reservasArray
-          .filter(r => {
-            if (r.estado !== 'completada') return false;
-            const fecha = new Date(r.fechaHora || r.createdAt || r.updatedAt);
-            if (isNaN(fecha.getTime())) return false;
-            return fecha.getMonth() === ahora.getMonth() && 
-                   fecha.getFullYear() === ahora.getFullYear();
-          })
-          .reduce((total, r) => total + (r.costos?.importeReal || r.costos?.subtotal || 0), 0);
-        
-        setStats({
-          totalTrabajos: trabajosCompletados,
-          ingresosMes: Math.round(ingresosMes),
-          ratingPromedio: 0
-        });
-        return;
-      }
-
-      let reviews = [];
-      try {
-        const reviewsRes = await api.get(`/reviews/oficio/${fetchedOficioId}`);
-        reviews = reviewsRes.data.reviews || [];
-      } catch (err) {
-        reviews = [];
-      }
-      
       const trabajosCompletados = reservasArray.filter(r => r.estado === 'completada').length;
       const ahora = new Date();
       const ingresosMes = reservasArray
@@ -175,10 +145,19 @@ const MisTrabajos: React.FC = () => {
                  fecha.getFullYear() === ahora.getFullYear();
         })
         .reduce((total, r) => total + (r.costos?.importeReal || r.costos?.subtotal || 0), 0);
-      
-      const ratingPromedio = reviews.length > 0 
-        ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
-        : 0;
+
+      let ratingPromedio = 0;
+      if (fetchedOficioId) {
+        try {
+          const reviewsRes = await api.get(`/api/reviews/oficio/${fetchedOficioId}`);
+          const reviews = reviewsRes.data.reviews || [];
+          ratingPromedio = reviews.length > 0 
+            ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
+            : 0;
+        } catch (err) {
+          console.log('[MisTrabajos] Error obteniendo reviews:', err);
+        }
+      }
       
       setStats({
         totalTrabajos: trabajosCompletados,
@@ -342,18 +321,6 @@ const MisTrabajos: React.FC = () => {
                   ⭐ Upgrade Premium
                 </Link>
               )}
-              
-              {/* Toggle Vista */}
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
-                  showCalendar 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {showCalendar ? '📋 Lista' : '📅 Calendario'}
-              </button>
             </div>
           </div>
         </div>
@@ -378,19 +345,16 @@ const MisTrabajos: React.FC = () => {
             </div>
             {(!user.tokens || user.tokens.disponibles <= 0) && (
               <div className="mt-3 p-2 bg-red-50 rounded text-sm text-red-700">
-                ⚠️ Sin tokens disponibles. 
-                {!user.tokens ? (
-                  <button 
-                    onClick={inicializarTokens}
-                    className="ml-2 text-blue-600 underline"
-                  >
-                    Inicializar tokens de bienvenida
-                  </button>
-                ) : (
-                  'No podrás aceptar nuevos trabajos hasta renovar tu plan.'
-                )}
+                ⚠️ Sin tokens disponibles. No podrás aceptar nuevos trabajos hasta renovar tu plan.
               </div>
             )}
+          </div>
+        )}
+
+        {/* Toggle de Disponibilidad */}
+        {oficioIdRef.current && (
+          <div className="mb-6">
+            <DisponibilidadToggle oficioId={oficioIdRef.current} />
           </div>
         )}
 
@@ -433,12 +397,8 @@ const MisTrabajos: React.FC = () => {
           </div>
         </div>
 
-        {/* Vista Condicional: Lista o Calendario */}
-        {showCalendar ? (
-          <CalendarioSemanal reservas={reservas} />
-        ) : (
-          /* Lista de Trabajos */
-          <div className="bg-white rounded-lg shadow-sm">
+        {/* Lista de Trabajos */}
+        <div className="bg-white rounded-lg shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Historial de Trabajos</h2>
           </div>
@@ -562,8 +522,7 @@ const MisTrabajos: React.FC = () => {
               ))}
             </div>
           )}
-          </div>
-        )}
+        </div>
         
         {/* Chat Modal */}
         {chatOpen && (

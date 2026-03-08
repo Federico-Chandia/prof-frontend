@@ -19,7 +19,7 @@ const DisponibilidadToggle: React.FC<DisponibilidadToggleProps> = ({ oficioId })
 
   const fetchDisponibilidad = async () => {
     try {
-      const response = await api.get(`/oficios/${oficioId}`);
+      const response = await api.get(`/api/oficios/${oficioId}`);
       setDisponible(response.data.oficio.disponibilidad.inmediata);
     } catch (error) {
       console.error('Error fetching disponibilidad:', error);
@@ -34,7 +34,7 @@ const DisponibilidadToggle: React.FC<DisponibilidadToggleProps> = ({ oficioId })
     
     setLoading(true);
     try {
-      await api.put(`/oficios/${oficioId}/disponibilidad`, {
+      await api.put(`/api/oficios/${oficioId}/disponibilidad`, {
         disponible: !disponible
       });
       setDisponible(!disponible);
