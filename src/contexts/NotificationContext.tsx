@@ -31,14 +31,14 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const response = await api.get('/notifications?limit=100');
         if (response.data?.data?.notifications) {
           const backendNotifications = response.data.data.notifications.map((n: any) => ({
-            id: n._id,
+            id: n._id.toString(),  // Asegurar que sea string
             tipo: n.tipo,
             titulo: n.titulo,
             mensaje: n.mensaje,
             leida: n.leida,
             fechaCreacion: n.fecha || n.createdAt,
-            reservaId: n.referencia?.reservaId,
-            chatId: n.referencia?.mensajeId,
+            reservaId: n.referencia?.reservaId?.toString?.(),
+            chatId: n.referencia?.mensajeId?.toString?.(),
             url: n.url,
             icon: n.icono,
           } as Notification));
@@ -56,7 +56,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Conectar Socket.IO para recibir notificaciones en tiempo real
   useEffect(() => {
-    // En desarrollo, usar ruta relativa para que funcione el proxy de Vite
     const getSocketUrl = (): string => {
       if (import.meta.env.DEV) return window.location.origin;
       const envUrl = import.meta.env.VITE_SOCKET_URL;
@@ -76,7 +75,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
-      transports: ['websocket', 'polling'] // Permitir fallback a polling
+      transports: ['websocket', 'polling']
     });
     socketRef.current = socket;
 
@@ -84,66 +83,52 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       console.log('[notifications] socket conectado', socket.id);
     });
 
-    socket.on('notify', (payload: any) => {
+    // ✅ CORREGIDO: Escuchar 'new_notification' en lugar de 'notify'
+    socket.on('new_notification', (payload: any) => {
       try {
-        // Usar type de la notificación desde el backend
-        const tipo = payload.data?.tipo || 'otro';
-        const nueva = {
-          tipo,
-          titulo: payload.title || 'Notificación',
-          mensaje: payload.body || '',
-          reservaId: payload.data?.reference?.reservaId?.toString?.() || undefined,
-          chatId: payload.data?.reference?.mensajeId?.toString?.() || undefined,
-          url: payload.url || undefined,
-          icon: payload.icon || undefined,
-          actions: payload.actions || undefined
-        } as Omit<Notification, 'id' | 'fechaCreacion' | 'leida'>;
-        const created = addNotification(nueva);
+        console.log('[notifications] Recibida notificación:', payload);
+        
+        const newNotification: Notification = {
+          id: payload.id,  // ✅ Usar ID del backend
+          tipo: payload.data?.tipo || payload.tipo || 'otro',
+          titulo: payload.title || payload.titulo || 'Notificación',
+          mensaje: payload.body || payload.mensaje || '',
+          leida: false,
+          fechaCreacion: payload.timestamp || new Date().toISOString(),
+          reservaId: payload.data?.reference?.reservaId?.toString?.() || payload.data?.referencia?.reservaId?.toString?.(),
+          chatId: payload.data?.reference?.mensajeId?.toString?.() || payload.data?.referencia?.mensajeId?.toString?.(),
+          url: payload.url,
+          icon: payload.icon || payload.icono,
+        };
+
+        // Agregar a la lista
+        setNotifications(prev => [newNotification, ...prev]);
 
         // Mostrar notificación del navegador si está permitido
         if (browserNotifications.permission === 'granted') {
-          const notif = browserNotifications.showNotification(created.titulo, {
-            body: created.mensaje,
-            icon: created.icon || '/favicon.ico',
-            tag: created.id,
-            data: { url: created.url },
-            actions: created.actions as NotificationAction[] | undefined
+          const notif = browserNotifications.showNotification(newNotification.titulo, {
+            body: newNotification.mensaje,
+            icon: newNotification.icon || '/favicon.ico',
+            tag: newNotification.id,
+            data: { url: newNotification.url },
           });
 
-          try {
-            if (notif) {
-              notif.onclick = (ev: any) => {
-                // Marcar como leída en la UI y navegar
-                markAsRead(created.id);
-                if (created.url) {
-                  try { window.focus(); } catch (e) {}
-                  try { window.location.href = created.url; } catch (e) { console.warn(e); }
-                }
-                try { notif.close(); } catch (e) {}
-              };
-              notif.onclose = () => {
-                // No eliminar la notificación de la lista: persistirla
-              };
-            }
-          } catch (err) {
-            console.warn('Error attaching notification handlers', err);
+          if (notif) {
+            notif.onclick = () => {
+              markAsRead(newNotification.id);
+              if (newNotification.url) {
+                window.focus();
+                window.location.href = newNotification.url;
+              }
+              notif.close();
+            };
           }
         }
 
-        // Guardar en BD para persistencia
-        try {
-          api.post('/notifications', { notification: nueva }).catch(e => console.debug('Error guardando notificación:', e));
-        } catch (err) {
-          console.debug('[NotificationContext] Error guardando notificación en BD:', err);
-        }
+        // ❌ ELIMINADO: No guardar en BD, ya viene guardada del backend
       } catch (err) {
-        console.warn('Error procesando notify:', err);
+        console.error('Error procesando new_notification:', err);
       }
-    });
-
-    socket.on('unreadCount', (data: any) => {
-      // Opcional: podríamos sincronizar con backend si queremos
-      console.log('[notifications] unreadCount', data);
     });
 
     socket.on('disconnect', (reason: any) => {
@@ -152,7 +137,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
 
     return () => {
-      try { socket.disconnect(); } catch (e) {}
+      socket.disconnect();
       socketRef.current = null;
     };
   }, [token]);
@@ -160,6 +145,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const unreadCount = notifications.filter(n => !n.leida).length;
 
   const addNotification = (notificationData: Omit<Notification, 'id' | 'fechaCreacion' | 'leida'>) => {
+    // Esta función solo se usa para notificaciones locales (no del backend)
     const newNotification: Notification = {
       ...notificationData,
       id: Date.now().toString(),
@@ -174,7 +160,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, leida: true } : n)
     );
-    // Actualizar en BD sin bloquear
     api.patch(`/notifications/${id}/read`).catch(e => console.debug('Error marcando como leída:', e));
   };
 
@@ -182,19 +167,16 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotifications(prev => 
       prev.map(n => ({ ...n, leida: true }))
     );
-    // Actualizar en BD sin bloquear
     api.patch('/notifications/read-all').catch(e => console.debug('Error marcando todas como leídas:', e));
   };
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
-    // Eliminar en BD sin bloquear
     api.delete(`/notifications/${id}`).catch(e => console.debug('Error eliminando notificación:', e));
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
-    // Eliminar todas en BD sin bloquear
     api.delete('/notifications').catch(e => console.debug('Error eliminando todas las notificaciones:', e));
   };
 
