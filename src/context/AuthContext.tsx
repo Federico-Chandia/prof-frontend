@@ -66,37 +66,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const response = await api.get('/auth/me');
-          const rawUser = response.data.user;
-          const normalizedUser = {
-            ...rawUser,
-            id: rawUser.id || rawUser._id || rawUser._id?.toString?.(),
-          };
+  // Reemplazar el useEffect de verificación periódica (líneas 75-96) con esto:
 
-          dispatch({
-            type: 'LOGIN_SUCCESS',
-            payload: {
-              user: normalizedUser,
-              token,
-            },
-          });
-        } catch (error) {
-          console.error('Error al verificar autenticación:', error);
-          localStorage.removeItem('token');
-          dispatch({ type: 'LOGOUT' });
-        }
-      } else {
-        dispatch({ type: 'SET_LOADING', payload: false });
+useEffect(() => {
+  if (!state.user || !state.token) return;
+
+  const checkTokenVersion = async () => {
+    try {
+      const response = await api.get('/auth/me');
+      const latestUser = response.data.user;
+      const currentTokenVersion = state.user?.tokenVersion || 0;
+      const latestTokenVersion = latestUser?.tokenVersion || 0;
+
+      if (latestTokenVersion !== currentTokenVersion) {
+        console.log('[AuthContext] Token version cambió, actualizando usuario');
+        const normalizedUser = {
+          ...latestUser,
+          id: latestUser.id || latestUser._id || latestUser._id?.toString?.(),
+        };
+        dispatch({ type: 'UPDATE_USER', payload: normalizedUser });
       }
-    };
+    } catch (error) {
+      console.debug('[AuthContext] Error verificando token version:', error);
+    }
+  };
 
-    initAuth();
-  }, []);
+  // Ejecutar inmediatamente y luego cada 5 minutos (no 30 segundos)
+  checkTokenVersion();
+  const interval = setInterval(checkTokenVersion, 300000); // 5 minutos = 300000ms
+  
+  return () => clearInterval(interval);
+}, [state.token]); // Solo depende de token, no de user completo
+
 
   // Verificar periódicamente si el rol o datos críticos han cambiado (ej: desde admin)
   useEffect(() => {

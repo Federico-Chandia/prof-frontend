@@ -16,99 +16,22 @@ const MisTrabajos: React.FC = () => {
     ingresosMes: 0,
     ratingPromedio: 0
   });
-  const [chatOpen, setChatOpen] = useState<{reservaId: string, otherUser: {id: string, name: string}} | null>(null);
+  const [chatOpen, setChatOpen] = useState<{ reservaId: string, otherUser: { id: string, name: string } } | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const oficioIdRef = useRef<string | null>(null);
-  const [completarModal, setCompletarModal] = useState<{reserva: Reserva} | null>(null);
+  const oficiosCacheRef = useRef<any>(null);
+  const [completarModal, setCompletarModal] = useState<{ reserva: Reserva } | null>(null);
   const [notasFinalizacion, setNotasFinalizacion] = useState('');
+  const [tokensInitialized, setTokensInitialized] = useState(false);
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { onDataUpdated } = useAutoRefresh();
 
-  useEffect(() => {
-    if (!user || !user.id) {
-      console.log('[MisTrabajos] User no disponible');
-      setLoading(false);
-      return;
-    }
-
-    console.log('[MisTrabajos] Iniciando carga');
-    
-    const initializeComponent = async () => {
-      setLoading(true);
-      try {
-        console.log('[MisTrabajos] Obteniendo oficios...');
-        const oficiosResponse = await api.get('/oficios');
-        const miOficio = oficiosResponse.data?.oficios?.find((o: any) => o.usuario?.id === user.id);
-        
-        if (miOficio) {
-          console.log('[MisTrabajos] Oficio encontrado');
-          oficioIdRef.current = miOficio._id;
-          await fetchReservasAndStats(miOficio._id);
-        } else {
-          console.log('[MisTrabajos] Sin oficio, cargando sin stats de reviews');
-          oficioIdRef.current = null;
-          await fetchReservasAndStats(null);
-        }
-      } catch (error: any) {
-        console.error('[MisTrabajos] Error:', error.message);
-        oficioIdRef.current = null;
-        await fetchReservasAndStats(null);
-      }
-    };
-
-    initializeComponent();
-    
-    if (user?.rol === 'profesional' && (!user.tokens || user.tokens.disponibles === 0)) {
-      inicializarTokens();
-    }
-  }, [user]);
-  
-  // Auto-refresco de reservas cuando hay cambios en tiempo real
-  useEffect(() => {
-    const unsubscribe = onDataUpdated('reservas', async () => {
-      console.log('[MisTrabajos] Reservas actualizadas, refrescando...');
-      await fetchReservasAndStats(oficioIdRef.current);
-    });
-    
-    return unsubscribe;
-  }, [onDataUpdated]);
-  
-  const inicializarTokens = async () => {
-    try {
-      const response = await api.post('/tokens/inicializar');
-      if (response.data.tokens && user) {
-        const updatedUser = { ...user, tokens: response.data.tokens };
-        updateUser(updatedUser);
-      }
-    } catch (error) {
-      console.error('Error al inicializar tokens:', error);
-    }
-  };
-
-  // Cerrar dropdown al hacer click fuera
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showNotifications && !target.closest('.notifications-dropdown')) {
-        setShowNotifications(false);
-      }
-    };
-
-    if (showNotifications) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showNotifications]);
-
   const fetchReservasAndStats = async (fetchedOficioId: string | null) => {
     try {
       console.log('[MisTrabajos] Fetchando reservas...');
-      
+
       const timeoutId = setTimeout(() => {
         console.error('[MisTrabajos] TIMEOUT después de 15s');
         setLoading(false);
@@ -118,7 +41,7 @@ const MisTrabajos: React.FC = () => {
         console.log('[MisTrabajos] GET /reservas?tipo=profesional...');
         const response = await api.get('/reservas?tipo=profesional');
         const reservasData = response.data;
-        
+
         console.log('[MisTrabajos] Response recibido:', {
           status: response.status,
           type: typeof reservasData,
@@ -126,12 +49,12 @@ const MisTrabajos: React.FC = () => {
           length: Array.isArray(reservasData) ? reservasData.length : 'N/A',
           data: reservasData
         });
-        
+
         const reservasArray = Array.isArray(reservasData) ? reservasData : [];
         console.log('[MisTrabajos] Reservas obtenidas:', reservasArray.length);
-        
+
         setReservas(reservasArray);
-        
+
         await recalcularEstadisticas(reservasArray, fetchedOficioId);
       } finally {
         clearTimeout(timeoutId);
@@ -153,8 +76,8 @@ const MisTrabajos: React.FC = () => {
           if (r.estado !== 'completada') return false;
           const fecha = new Date(r.fechaHora || r.createdAt || r.updatedAt);
           if (isNaN(fecha.getTime())) return false;
-          return fecha.getMonth() === ahora.getMonth() && 
-                 fecha.getFullYear() === ahora.getFullYear();
+          return fecha.getMonth() === ahora.getMonth() &&
+            fecha.getFullYear() === ahora.getFullYear();
         })
         .reduce((total, r) => total + (r.costos?.importeReal || r.costos?.subtotal || 0), 0);
 
@@ -163,14 +86,14 @@ const MisTrabajos: React.FC = () => {
         try {
           const reviewsRes = await api.get(`/api/reviews/oficio/${fetchedOficioId}`);
           const reviews = reviewsRes.data.reviews || [];
-          ratingPromedio = reviews.length > 0 
-            ? reviews.reduce((sum, r) => sum + (r.puntuacion || 0), 0) / reviews.length 
+          ratingPromedio = reviews.length > 0
+            ? reviews.reduce((sum: number, r: any) => sum + (r.puntuacion || 0), 0) / reviews.length
             : 0;
         } catch (err) {
           console.log('[MisTrabajos] Error obteniendo reviews:', err);
         }
       }
-      
+
       setStats({
         totalTrabajos: trabajosCompletados,
         ingresosMes: Math.round(ingresosMes),
@@ -182,20 +105,29 @@ const MisTrabajos: React.FC = () => {
     }
   };
 
+  const inicializarTokens = async () => {
+    try {
+      const response = await api.post('/tokens/inicializar');
+      if (response.data.tokens && user) {
+        const updatedUser = { ...user, tokens: response.data.tokens };
+        updateUser(updatedUser);
+      }
+    } catch (error) {
+      console.error('Error al inicializar tokens:', error);
+    }
+  };
+
   const handleReservaAction = async (reservaId: string, action: 'aceptar' | 'rechazar' | 'iniciar') => {
     try {
       if (action === 'aceptar') {
-        // Verificar tokens antes de aceptar
         if (user?.tokens && user.tokens.disponibles <= 0) {
           return;
         }
-        
-        // Para aceptar, cambiar estado y consumir token
+
         const response = await api.put(`/reservas/${reservaId}/estado`, {
           estado: 'en_progreso'
         });
-        
-        // Actualizar tokens desde la respuesta del backend
+
         if (response.data.tokens && user) {
           const updatedUser = { ...user, tokens: { ...user.tokens, disponibles: response.data.tokens.tokensRestantes } };
           updateUser(updatedUser);
@@ -209,13 +141,10 @@ const MisTrabajos: React.FC = () => {
           estado: 'en_progreso'
         });
       }
-      
-      // Actualizar la lista de reservas y estadísticas
+
       await fetchReservasAndStats(oficioIdRef.current);
     } catch (error: any) {
-      // Manejo específico de errores de tokens
       if (error?.message?.includes('tokens') || error?.response?.status === 403) {
-        // Refrescar información del usuario para sincronizar tokens
         try {
           const userResponse = await api.get('/auth/me');
           updateUser(userResponse.data.user);
@@ -231,7 +160,7 @@ const MisTrabajos: React.FC = () => {
       await api.put(`/reservas/${reservaId}/marcar-completado`, {
         notasFinalizacion: notas
       });
-      
+
       await fetchReservasAndStats(oficioIdRef.current);
       setCompletarModal(null);
       setNotasFinalizacion('');
@@ -241,15 +170,15 @@ const MisTrabajos: React.FC = () => {
   };
 
   const getEstadoBadge = (estado: string) => {
-    const badges = {
+    const badges: Record<string, string> = {
       'orden_generada': 'bg-blue-100 text-blue-800',
       'en_progreso': 'bg-purple-100 text-purple-800',
       'pendiente_confirmacion': 'bg-amber-100 text-amber-800',
       'completada': 'bg-green-100 text-green-800',
       'cancelada': 'bg-red-100 text-red-800'
     };
-    
-    const labels = {
+
+    const labels: Record<string, string> = {
       'orden_generada': 'Orden Generada',
       'en_progreso': 'En Progreso',
       'pendiente_confirmacion': 'Esperando Confirmación',
@@ -258,8 +187,8 @@ const MisTrabajos: React.FC = () => {
     };
 
     return (
-      <span className={`px-2 py-1 text-xs rounded-full ${badges[estado as keyof typeof badges]}`}>
-        {labels[estado as keyof typeof labels]}
+      <span className={`px-2 py-1 text-xs rounded-full ${badges[estado] || 'bg-gray-100 text-gray-800'}`}>
+        {labels[estado] || estado}
       </span>
     );
   };
@@ -275,7 +204,6 @@ const MisTrabajos: React.FC = () => {
     } else {
       d = new Date(String(fecha));
       if (isNaN(d.getTime())) {
-        // intentos adicionales (e.g. /Date(123456789)/)
         const m = String(fecha).match(/-?\d+/);
         if (m) d = new Date(Number(m[0]));
       }
@@ -295,13 +223,88 @@ const MisTrabajos: React.FC = () => {
   };
 
   const getUbicacionSegura = (reserva: Reserva) => {
-    // Para trabajos finalizados y cancelados, solo mostrar barrio
     if (reserva.estado === 'completada' || reserva.estado === 'cancelada') {
       return reserva.direccion.barrio;
     }
-    // Para trabajos activos, mostrar dirección completa
     return `${reserva.direccion.calle}, ${reserva.direccion.barrio}`;
   };
+
+  useEffect(() => {
+    if (!user || !user.id) {
+      console.log('[MisTrabajos] User no disponible');
+      setLoading(false);
+      return;
+    }
+
+    console.log('[MisTrabajos] Iniciando carga');
+
+    const initializeComponent = async () => {
+      setLoading(true);
+      try {
+        console.log('[MisTrabajos] Obteniendo oficios...');
+        const oficiosResponse = oficiosCacheRef.current || await api.get('/oficios');
+        if (!oficiosCacheRef.current) {
+          oficiosCacheRef.current = oficiosResponse;
+        }
+        const miOficio = oficiosResponse.data?.oficios?.find((o: any) => o.usuario?.id === user.id);
+
+        if (miOficio) {
+          console.log('[MisTrabajos] Oficio encontrado');
+          oficioIdRef.current = miOficio._id;
+          await fetchReservasAndStats(miOficio._id);
+        } else {
+          console.log('[MisTrabajos] Sin oficio, cargando sin stats de reviews');
+          oficioIdRef.current = null;
+          await fetchReservasAndStats(null);
+        }
+      } catch (error: any) {
+        console.error('[MisTrabajos] Error:', error.message);
+        oficioIdRef.current = null;
+        await fetchReservasAndStats(null);
+      }
+    };
+
+    initializeComponent();
+
+    if (user?.rol === 'profesional' && !tokensInitialized && (!user.tokens || user.tokens.disponibles === 0)) {
+      inicializarTokens();
+      setTokensInitialized(true);
+    }
+  }, [user, tokensInitialized]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const unsubscribe = onDataUpdated('reservas', () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(async () => {
+        console.log('[MisTrabajos] Reservas actualizadas, refrescando...');
+        await fetchReservasAndStats(oficioIdRef.current);
+      }, 2000);
+    });
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeoutId);
+    };
+  }, [onDataUpdated]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showNotifications && !target.closest('.notifications-dropdown')) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
 
   if (loading) {
     return (
@@ -316,15 +319,14 @@ const MisTrabajos: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">              
+            <div className="flex items-center gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Mis Trabajos</h1>
                 <p className="text-gray-600 mt-2">Gestiona tus reservas y revisa tu historial</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 flex-wrap">
-              {/* Botón Comprar Suscripción */}
               {user?.planActual !== 'premium' && (
                 <Link
                   to="/suscripcion"
@@ -341,7 +343,7 @@ const MisTrabajos: React.FC = () => {
         {user?.rol === 'profesional' && (
           <div className="bg-white p-4 rounded-lg shadow-sm mb-6 border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
-                <div className="flex items-center">
+              <div className="flex items-center">
                 <img src="/Token.svg" alt="Token" className="w-6 h-6 mr-3 inline-block" />
                 <div>
                   <h3 className="font-semibold text-gray-900">Tokens Disponibles</h3>
@@ -350,7 +352,7 @@ const MisTrabajos: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold text-blue-600">{user.tokens?.disponibles || 0}</p>
-                {(user.tokens?.disponibles ) <= 1 && (
+                {(user.tokens?.disponibles ?? 0) <= 1 && (
                   <p className="text-xs text-orange-600 font-medium">Tokens bajos</p>
                 )}
               </div>
@@ -414,7 +416,7 @@ const MisTrabajos: React.FC = () => {
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Historial de Trabajos</h2>
           </div>
-          
+
           {reservas.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-gray-500">No tienes trabajos registrados aún.</p>
@@ -431,18 +433,17 @@ const MisTrabajos: React.FC = () => {
                         </h3>
                         {getEstadoBadge(reserva.estado)}
                       </div>
-                      
+
                       <div className="mb-3">
                         <p className="text-sm text-gray-500 mb-1">Descripción del trabajo:</p>
                         <p className="text-gray-700 bg-gray-50 p-2 rounded text-sm">{reserva.descripcionTrabajo}</p>
                       </div>
-                      
+
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span>📍 {getUbicacionSegura(reserva)}</span>
                         <span>📅 {formatFecha(reserva.fechaHora || reserva.createdAt)}</span>
                       </div>
 
-                      {/* Mostrar solicitud de corrección si existe */}
                       {reserva.solicitudCorreccion?.activa && (
                         <div className="mt-3 p-3 bg-yellow-50 rounded-md">
                           <p className="text-sm text-yellow-800">
@@ -451,7 +452,6 @@ const MisTrabajos: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Mostrar estado de confirmación */}
                       {reserva.estado === 'pendiente_confirmacion' && (
                         <div className="mt-3 p-3 bg-blue-50 rounded-md">
                           <p className="text-sm text-blue-800">
@@ -465,7 +465,7 @@ const MisTrabajos: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="text-right">
                       {reserva.estado === 'completada' && reserva.costos.importeReal && (
                         <>
@@ -479,11 +479,11 @@ const MisTrabajos: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 flex gap-2">
                     {(reserva.estado === 'orden_generada' || reserva.estado === 'pago_pendiente') && (
                       <>
-                        <button 
+                        <button
                           onClick={() => handleReservaAction(reserva._id, 'aceptar')}
                           disabled={user?.tokens && user.tokens.disponibles <= 0}
                           className="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -491,7 +491,7 @@ const MisTrabajos: React.FC = () => {
                         >
                           ✅ Aceptar {user?.tokens && user.tokens.disponibles <= 0 ? '(Sin tokens)' : '(1 token)'}
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleReservaAction(reserva._id, 'rechazar')}
                           className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700"
                         >
@@ -499,30 +499,30 @@ const MisTrabajos: React.FC = () => {
                         </button>
                       </>
                     )}
-                    
+
                     {reserva.estado === 'pago_confirmado' && (
-                      <button 
+                      <button
                         onClick={() => handleReservaAction(reserva._id, 'iniciar')}
                         className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
                       >
                         🚀 Iniciar Trabajo
                       </button>
                     )}
-                    
+
                     {reserva.estado === 'en_progreso' && (
-                      <button 
-                        onClick={() => setCompletarModal({reserva})}
+                      <button
+                        onClick={() => setCompletarModal({ reserva })}
                         className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700"
                       >
                         ✅ Marcar Completado
                       </button>
                     )}
-                    
-                    {['pago_confirmado', 'orden_generada', 'en_progreso', 'pendiente_confirmacion'].includes(reserva.estado) && (
-                      <button 
+
+                    {(['pago_confirmado', 'orden_generada', 'en_progreso', 'pendiente_confirmacion'] as const).includes(reserva.estado as any) && (
+                      <button
                         onClick={() => setChatOpen({
                           reservaId: reserva._id,
-                          otherUser: { id: reserva.cliente?._id || '', name: reserva.cliente?.nombre || 'Cliente' }
+                          otherUser: { id: reserva.cliente?.id || reserva.cliente?._id || '', name: reserva.cliente?.nombre || 'Cliente' }
                         })}
                         className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-50"
                       >
@@ -535,7 +535,7 @@ const MisTrabajos: React.FC = () => {
             </div>
           )}
         </div>
-        
+
         {/* Chat Modal */}
         {chatOpen && (
           <ChatModalV2

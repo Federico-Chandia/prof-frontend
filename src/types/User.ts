@@ -1,5 +1,7 @@
 export interface User {
   id: string;
+  _id?: string;
+  planActual?: 'basico' | 'premium' | 'profesional';
   nombre: string;
   email: string;
   telefono?: string;

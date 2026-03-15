@@ -24,7 +24,7 @@ export interface Reserva {
       lng: number;
     };
   };
-  estado: 'orden_generada' | 'en_progreso' | 'pendiente_confirmacion' | 'completada' | 'cancelada';
+  estado: 'orden_generada' | 'pago_pendiente' | 'pago_confirmado' | 'en_progreso' | 'pendiente_confirmacion' | 'completada' | 'cancelada';
   costos: {
     subtotal: number;
     total: number;
