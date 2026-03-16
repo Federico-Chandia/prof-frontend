@@ -7,27 +7,14 @@ const ToastContainer: React.FC = () => {
   const [visibleToasts, setVisibleToasts] = useState<Notification[]>([]);
 
   useEffect(() => {
-    // Mostrar solo las notificaciones nuevas como toasts (últimas 3)
     const newToasts = notifications.slice(0, 3);
     setVisibleToasts(newToasts);
 
-    // Auto-remover toast después de 5 segundos
-    const timers = newToasts.map(toast => 
+    const timers = newToasts.map(toast =>
       setTimeout(() => {
         setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
         removeNotification(toast.id);
       }, 8000)
-      // Pause timer on hover
-      let hoverTimeout: NodeJS.Timeout;
-      const handleMouseEnter = () => {
-        clearTimeout(hoverTimeout);
-      };
-      const handleMouseLeave = () => {
-        hoverTimeout = setTimeout(() => {
-          setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
-          removeNotification(toast.id);
-        }, 8000);
-      };
     );
 
     return () => timers.forEach(timer => clearTimeout(timer));
