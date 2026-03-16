@@ -16,7 +16,18 @@ const ToastContainer: React.FC = () => {
       setTimeout(() => {
         setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
         removeNotification(toast.id);
-      }, 4000)
+      }, 8000)
+      // Pause timer on hover
+      let hoverTimeout: NodeJS.Timeout;
+      const handleMouseEnter = () => {
+        clearTimeout(hoverTimeout);
+      };
+      const handleMouseLeave = () => {
+        hoverTimeout = setTimeout(() => {
+          setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
+          removeNotification(toast.id);
+        }, 8000);
+      };
     );
 
     return () => timers.forEach(timer => clearTimeout(timer));

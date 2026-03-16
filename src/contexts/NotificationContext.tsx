@@ -83,8 +83,8 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       console.log('[notifications] socket conectado', socket.id);
     });
 
-    // ✅ CORREGIDO: Escuchar 'new_notification' en lugar de 'notify'
-    socket.on('new_notification', (payload: any) => {
+    // ✅ FIX: Escuchar 'notify' (evento del backend)
+    socket.on('notify', (payload: any) => {
       try {
         console.log('[notifications] Recibida notificación:', payload);
         
