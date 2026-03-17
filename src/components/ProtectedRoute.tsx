@@ -13,14 +13,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles = [], 
   redirectTo = '/login' 
 }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, token } = useAuth();
 
+  // Si no hay token en absoluto, redirigir de inmediato sin esperar
+  if (!token) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  // Hay token pero aún verificando con el backend — renderizar contenido optimistamente
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <>{children}</>;
   }
 
   if (!user) {
