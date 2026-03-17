@@ -23,7 +23,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Sincronizar notificaciones desde BD al iniciar sesión
   useEffect(() => {
-    if (!token || !user) return;
+    if (!token) return;
 
     const syncNotificationsFromBackend = async () => {
       try {
@@ -52,7 +52,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
 
     syncNotificationsFromBackend();
-  }, [token, user]);
+  }, [token]);
 
   // Conectar Socket.IO para recibir notificaciones en tiempo real
   useEffect(() => {
