@@ -1,1 +1,0 @@
-import{a as t}from"./index-Dtv-iYUX.js";import"./react-vendor-7DpRPloQ.js";import"./vendor-C4FFKyru.js";import"./socket-D_yWh2Dn.js";import"./axios-BPTwnBaP.js";const o=async(o,r={})=>{try{t.post("/api/analytics",{event:o,properties:r}).catch(t=>{})}catch(s){}};export{o as sendEvent};

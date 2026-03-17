@@ -20,5 +20,6 @@ export interface NotificationContextType {
   addNotification: (notification: Omit<Notification, 'id' | 'fechaCreacion' | 'leida'>) => Notification; // devuelve la notificación creada
   removeNotification: (id: string) => void;
   clearAllNotifications: () => void;
+  fetchNotifications: () => Promise<void>;
   error?: string | null;
 }

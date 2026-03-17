@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Notification, NotificationContextType } from '../types/notification';
 import { useAuth } from '../context/AuthContext';
@@ -144,6 +144,34 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const unreadCount = notifications.filter(n => !n.leida).length;
 
+  const fetchNotifications = useCallback(async () => {
+    try {
+      console.log('[NotificationContext] Fetching notifications...');
+      const response = await api.get('/notifications?limit=50');
+      if (response.data?.data?.notifications) {
+        const fetchedNotifications = response.data.data.notifications
+          .map((n: any) => ({
+            id: n._id.toString(),
+            tipo: n.tipo,
+            titulo: n.titulo,
+            mensaje: n.mensaje,
+            leida: n.leida,
+            fechaCreacion: n.fecha || n.createdAt,
+            reservaId: n.referencia?.reservaId?.toString?.(),
+            chatId: n.referencia?.mensajeId?.toString?.(),
+            url: n.url,
+            icon: n.icono,
+          } as Notification))
+          .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime());
+        setNotifications(fetchedNotifications);
+        console.log('[NotificationContext] Fetched', fetchedNotifications.length, 'notifications');
+      }
+    } catch (err) {
+      console.warn('[NotificationContext] Fetch notifications failed:', err);
+    }
+  }, []);
+
+
   const addNotification = (notificationData: Omit<Notification, 'id' | 'fechaCreacion' | 'leida'>) => {
     // Esta función solo se usa para notificaciones locales (no del backend)
     const newNotification: Notification = {
@@ -188,8 +216,10 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       markAllAsRead,
       addNotification,
       removeNotification,
-      clearAllNotifications
+      clearAllNotifications,
+      fetchNotifications
     }}>
+
       {children}
     </NotificationContext.Provider>
   );

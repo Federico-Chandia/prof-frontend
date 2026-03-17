@@ -3,7 +3,7 @@ import { useNotifications } from '../contexts/NotificationContext';
 import { Notification } from '../types/notification';
 
 const ToastContainer: React.FC = () => {
-  const { notifications, removeNotification } = useNotifications();
+  const { notifications, markAsRead } = useNotifications();
   const [visibleToasts, setVisibleToasts] = useState<Notification[]>([]);
 
   useEffect(() => {
@@ -12,13 +12,13 @@ const ToastContainer: React.FC = () => {
 
     const timers = newToasts.map(toast =>
       setTimeout(() => {
+        markAsRead(toast.id);
         setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
-        removeNotification(toast.id);
       }, 8000)
     );
 
     return () => timers.forEach(timer => clearTimeout(timer));
-  }, [notifications, removeNotification]);
+  }, [notifications, markAsRead]);
 
   const getToastBackground = (tipo: string) => {
     switch (tipo) {
@@ -63,8 +63,8 @@ const ToastContainer: React.FC = () => {
           </div>
           <button
             onClick={() => {
+              markAsRead(toast.id);
               setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
-              removeNotification(toast.id);
             }}
             className="text-lg opacity-70 hover:opacity-100 flex-shrink-0"
           >

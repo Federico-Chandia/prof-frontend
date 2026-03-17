@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { useNotifications } from '../contexts/NotificationContext';
 
 const NotificationDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, clearAllNotifications } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, clearAllNotifications, fetchNotifications } = useNotifications();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchNotifications();
+    }
+  }, [isOpen, fetchNotifications]);
 
   console.log('[NotificationDropdown] notifications:', notifications);
+
   console.log('[NotificationDropdown] unreadCount:', unreadCount);
 
   const getNotificationIcon = (tipo: string) => {
