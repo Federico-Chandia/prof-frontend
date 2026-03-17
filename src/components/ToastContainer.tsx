@@ -19,7 +19,7 @@ const ToastContainer: React.FC = () => {
       setTimeout(() => {
         markAsRead(toast.id);
         setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
-      }, 8000)
+      }, 6000)
     );
 
     return () => timers.forEach(timer => clearTimeout(timer));

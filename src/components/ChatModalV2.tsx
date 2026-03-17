@@ -407,8 +407,9 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
                 }}
                 className="hidden"
               />
-              <span className={`px-3 py-2 rounded-md text-sm border cursor-pointer ${imageUploading || !connected ? 'opacity-50 cursor-not-allowed' : 'bg-white hover:bg-gray-100'}`}>
-                📷 <br /> Enviar imágen
+              <span className={`px-3 py-2 rounded-md text-sm border cursor-pointer flex flex-col items-center leading-tight ${imageUploading || !connected ? 'opacity-50 cursor-not-allowed' : 'bg-white hover:bg-gray-100'}`}>
+                <span>📸</span>
+                <span>Imágen</span>
               </span>
             </label>
             <button
@@ -416,7 +417,7 @@ const ChatModalV2: React.FC<ChatModalProps> = ({ reservaId, otherUser, onClose }
               disabled={!newMessage.trim() || loading || !connected}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
             >
-              {loading ? '⏳' : '📤 enviar'}
+              {loading ? '⏳' : '📤 Enviar'}
             </button>
           </div>
         </div>
