@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNotifications } from '../contexts/NotificationContext';
 import { Notification } from '../types/notification';
 
@@ -6,9 +6,14 @@ const ToastContainer: React.FC = () => {
   const { notifications, markAsRead } = useNotifications();
   const [visibleToasts, setVisibleToasts] = useState<Notification[]>([]);
 
+  // Solo mostrar notificaciones no leídas como toasts
+  const unreadNotifications = notifications.filter(n => !n.leida);
+  
   useEffect(() => {
-    const newToasts = notifications.slice(0, 3);
-    setVisibleToasts(newToasts);
+    const newToasts = unreadNotifications.slice(0, 3);
+    if (newToasts.length > 0) {
+      setVisibleToasts(newToasts);
+    }
 
     const timers = newToasts.map(toast =>
       setTimeout(() => {
@@ -18,7 +23,12 @@ const ToastContainer: React.FC = () => {
     );
 
     return () => timers.forEach(timer => clearTimeout(timer));
-  }, [notifications, markAsRead]);
+  }, [unreadNotifications, markAsRead]);
+
+  const handleCloseToast = useCallback((toastId: string) => {
+    markAsRead(toastId);
+    setVisibleToasts(prev => prev.filter(t => t.id !== toastId));
+  }, [markAsRead]);
 
   const getToastBackground = (tipo: string) => {
     switch (tipo) {
@@ -62,11 +72,8 @@ const ToastContainer: React.FC = () => {
             <p className="text-xs opacity-90 mt-1">{toast.mensaje}</p>
           </div>
           <button
-            onClick={() => {
-              markAsRead(toast.id);
-              setVisibleToasts(prev => prev.filter(t => t.id !== toast.id));
-            }}
-            className="text-lg opacity-70 hover:opacity-100 flex-shrink-0"
+            onClick={() => handleCloseToast(toast.id)}
+            className="text-lg opacity-70 hover:opacity-100 flex-shrink-0 ml-2"
           >
             ✕
           </button>
