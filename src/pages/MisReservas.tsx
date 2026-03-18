@@ -365,13 +365,13 @@ const MisReservas: React.FC = () => {
                         </div>
                       )}
 
-                      {reserva.solicitudCorreccion?.activa && (
-                        <div className="mt-3 p-3 bg-yellow-50 rounded-md">
-                          <p className="text-sm text-yellow-800">
-                            <strong>Correcciones solicitadas:</strong> {reserva.solicitudCorreccion.descripcion}
-                          </p>
-                        </div>
-                      )}
+{reserva.solicitudCorreccion?.activa && reserva.estado !== 'completada' && (
+  <div className="mt-3 p-3 bg-yellow-50 rounded-md">
+    <p className="text-sm text-yellow-800">
+      <strong>Correcciones solicitadas:</strong> {reserva.solicitudCorreccion.descripcion}
+    </p>
+  </div>
+)}
                       
                       <div className="mt-4 flex gap-2">
                         {reserva.estado === 'pendiente_confirmacion' && (

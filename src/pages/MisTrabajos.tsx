@@ -444,13 +444,13 @@ const MisTrabajos: React.FC = () => {
                         <span>📅 {formatFecha(reserva.fechaHora || reserva.createdAt)}</span>
                       </div>
 
-                      {reserva.solicitudCorreccion?.activa && (
-                        <div className="mt-3 p-3 bg-yellow-50 rounded-md">
-                          <p className="text-sm text-yellow-800">
-                            <strong>Correcciones solicitadas:</strong> {reserva.solicitudCorreccion.descripcion}
-                          </p>
-                        </div>
-                      )}
+{reserva.solicitudCorreccion?.activa && reserva.estado !== 'completada' && (
+  <div className="mt-3 p-3 bg-yellow-50 rounded-md">
+    <p className="text-sm text-yellow-800">
+      <strong>Correcciones solicitadas:</strong> {reserva.solicitudCorreccion.descripcion}
+    </p>
+  </div>
+)}
 
                       {reserva.estado === 'pendiente_confirmacion' && (
                         <div className="mt-3 p-3 bg-blue-50 rounded-md">
@@ -489,7 +489,7 @@ const MisTrabajos: React.FC = () => {
                           className="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           title={user?.tokens && user.tokens.disponibles <= 0 ? 'Sin tokens disponibles' : 'Aceptar trabajo (consume 1 token)'}
                         >
-                          ✅ Aceptar {user?.tokens && user.tokens.disponibles <= 0 ? '(Sin tokens)' : '(1 token)'}
+✅ Aceptar {(user?.tokens?.disponibles ?? 0) <= 0 ? '(Sin tokens)' : '(1 token)'}
                         </button>
                         <button
                           onClick={() => handleReservaAction(reserva._id, 'rechazar')}
@@ -518,7 +518,8 @@ const MisTrabajos: React.FC = () => {
                       </button>
                     )}
 
-                    {(['pago_confirmado', 'orden_generada', 'en_progreso', 'pendiente_confirmacion'] as const).includes(reserva.estado as any) && (
+{(['pago_confirmado', 'orden_generada', 'en_progreso', 'pendiente_confirmacion'] as const).includes(reserva.estado as any) 
+  && !(reserva.estado === 'orden_generada' && (user?.tokens?.disponibles ?? 0) <= 0) && (
                       <button
                         onClick={() => setChatOpen({
                           reservaId: reserva._id,
